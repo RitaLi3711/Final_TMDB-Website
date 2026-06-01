@@ -1,9 +1,16 @@
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components";
+
 export const HomeView = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="flex min-h-screen justify-center bg-linear-to-br from-slate-950 via-slate-900 to-slate-800 px-6 py-12 text-slate-100">
-      <div className="flex min-h-screen items-center justify-center">
-        <h1 className="font-extrabold text-5xl tracking-tight">Summative</h1>
-      </div>
-    </div>
+    <main className="flex min-h-screen items-center justify-center bg-[#0d1821] text-[#f0f4ef]">
+      <section className="w-full max-w-3xl space-y-8 text-center">
+        <h1 className="font-bold text-5xl text-[#e6aace] tracking-tight">TMDB Explorer</h1>
+        <p className="text-[#bfcc94] text-lg">Explore movies and discover people using a fast, modern interface.</p>
+        <Button onClick={() => navigate("/movies")}>Enter</Button>
+      </section>
+    </main>
   );
 };
