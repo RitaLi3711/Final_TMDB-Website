@@ -9,7 +9,7 @@ type ImageGridProps = {
 
 export const ImageGrid = ({ images, onClick, children }: ImageGridProps) => {
   return (
-    <div className="grid grid-cols-5 gap-5">
+    <div className="grid w-full grid-cols-5 gap-5">
       {images.map((image) => (
         <div
           className={`relative overflow-hidden rounded-lg bg-gray-800 ${onClick ? "cursor-pointer transition hover:scale-[1.02]" : ""}`}
@@ -17,13 +17,17 @@ export const ImageGrid = ({ images, onClick, children }: ImageGridProps) => {
           onClick={() => onClick?.(image)}
         >
           {children?.(image)}
-          <img alt={image.primaryText} src={image.imageUrl} />
-          {(image.primaryText || image.secondaryText) && (
-            <div className="flex flex-col p-3 text-center">
-              {image.primaryText && <p className="truncate font-semibold text-sm">{image.primaryText}</p>}
-              {image.secondaryText && <p className="truncate font-semibold text-blue-400 text-sm">{image.secondaryText}</p>}
+          {image.imageUrl ? (
+            <img alt={image.primaryText} className="aspect-2/3 w-full object-cover" src={image.imageUrl} />
+          ) : (
+            <div className="flex aspect-2/3 w-full items-center justify-center bg-gray-700">
+              <span className="text-gray-400">No image</span>
             </div>
           )}
+          <div className="p-3 text-center">
+            <p className="truncate font-semibold text-[#f0f4ef] text-sm">{image.primaryText}</p>
+            {image.secondaryText && <p className="text-gray-400 text-xs">{image.secondaryText}</p>}
+          </div>
         </div>
       ))}
     </div>

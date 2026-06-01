@@ -1,26 +1,29 @@
 import type { ReactNode } from "react";
-import { NavLink, useMatch } from "react-router-dom";
+import { matchPath, NavLink, useLocation } from "react-router-dom";
 
 type LinkProps = {
   children: ReactNode;
   to: string;
-  match?: string;
+  match?: string[];
+  replace?: boolean;
 };
 
-export const Link = ({ children, to, match }: LinkProps) => {
-  const matchResult = useMatch({ path: match || "" });
-  const isMatched = !!match && !!matchResult;
+export const Link = ({ children, to, match = [], replace = false }: LinkProps) => {
+  const { pathname } = useLocation();
+
+  const matched = match.some((pattern) => matchPath({ end: false, path: pattern }, pathname));
 
   return (
     <NavLink
       className={({ isActive }) =>
-        `rounded-md border px-4 py-1 transition-all duration-200 ${
-          isActive || isMatched
-            ? "scale-105 border-white bg-white text-gray-900 shadow-lg"
-            : "border-gray-700 bg-gray-700 text-gray-300 hover:border-gray-500 hover:bg-gray-600 hover:text-white"
+        `rounded-md border px-4 py-2 transition-all duration-200 ${
+          isActive || matched
+            ? "scale-105 border-[#e6aace] bg-[#e6aace] text-[#0d1821] shadow-lg"
+            : "border-[#344966] bg-[#344966] text-[#f0f4ef] hover:border-[#bfcc94] hover:bg-[#2a3b52] hover:text-[#f0f4ef]"
         }`
       }
-      replace
+      end
+      replace={replace}
       to={to}
     >
       {children}
