@@ -23,15 +23,8 @@
     "indentWidth": 2,
     "lineWidth": 140
   },
-  "html": {
-    "formatter": {
-      "enabled": true,
-      "selfCloseVoidElements": "always"
-    }
-  },
   "javascript": {
     "formatter": {
-      "enabled": true,
       "jsxQuoteStyle": "double",
       "quoteStyle": "double",
       "semicolons": "always"
@@ -45,6 +38,7 @@
       "a11y": "off",
       "nursery": {
         "useSortedClasses": {
+          "fix": "safe",
           "level": "error"
         }
       }

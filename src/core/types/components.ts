@@ -13,6 +13,8 @@ export type ImageCell = {
   seasonId?: number;
   season?: number;
   media?: Media;
+  airDate?: string;
+  releaseDate?: string;
 };
 
 export type ImageAction = {
