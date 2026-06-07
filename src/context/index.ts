@@ -1,2 +1,2 @@
-export * from "@/context/UserContext";
-export * from "@/context/UserProvider";
+export * from "@/context/FirebaseContext";
+export * from "@/context/FirebaseProvider";
