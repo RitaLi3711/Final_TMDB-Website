@@ -15,9 +15,9 @@ export const Header = () => {
   const [type, setType] = useState<SearchType>("movie");
   const { userName, favorites, cart } = useFirebaseContext();
 
-  if (location.pathname === "/") {
-    return null;
-  }
+if (location.pathname === "/" || location.pathname === "/sign-in") {
+  return null;
+}
 
   return (
     <header className="sticky top-0 z-50 border-[#344966] border-b bg-[#0d1821]">

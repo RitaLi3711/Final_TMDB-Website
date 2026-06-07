@@ -17,6 +17,7 @@ import {
   SearchView,
   SeasonsView,
   SettingsView,
+  SignInView,
   SummaryView,
   TelevisionView,
   TrailersView,
@@ -28,6 +29,7 @@ export const App = () => {
     <Routes>
       <Route element={<MainLayout />}>
         <Route element={<HomeView />} path="/" />
+        <Route element={<SignInView />} path="/sign-in" />
 
         <Route element={<Navigate replace to="/movies/category/now_playing" />} path="movies" />
         <Route element={<MoviesView />} path="movies/category/:interval" />

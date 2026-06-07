@@ -145,11 +145,11 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
       }
     }
     setFavorites(newFavorites);
-    
+
     if (user) {
       await setDoc(doc(firestore, "users", user.uid), {
-        favorites: Object.fromEntries(newFavorites),
         cart: Object.fromEntries(cart),
+        favorites: Object.fromEntries(newFavorites),
         movieGenrePref,
         tvGenrePref,
       });

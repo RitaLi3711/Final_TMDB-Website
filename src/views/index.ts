@@ -22,3 +22,4 @@ export * from "@/views/tv/TelevisionView";
 export * from "@/views/user/CartView";
 export * from "@/views/user/FavoritesView";
 export * from "@/views/user/SettingsView";
+export * from "@/views/user/SignInView";
