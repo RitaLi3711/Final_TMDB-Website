@@ -1,9 +1,9 @@
 import { FaRegHeart, FaRegTrashAlt } from "@/components";
 import { calculatePrice, formatPrice, ICON_SIZE, TAX_RATE } from "@/core";
-import { useUserContext } from "@/hooks";
+import { useFirebaseContext } from "@/hooks";
 
 export const CartView = () => {
-  const { cart, removeFromCart, favorites, toggleFavorite, clearCart } = useUserContext();
+  const { cart, removeFromCart, favorites, toggleFavorite, clearCart } = useFirebaseContext();
   const items = Array.from(cart.values());
 
   const subtotal = items.reduce((sum, item) => sum + calculatePrice(item.airDate || item.releaseDate || ""), 0);

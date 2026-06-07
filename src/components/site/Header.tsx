@@ -6,14 +6,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ButtonGroup, LinkGroup, SearchBar } from "@/components";
 import type { SearchType } from "@/core";
 import { ICON_SIZE } from "@/core";
-import { useUserContext } from "@/hooks";
+import { useFirebaseContext } from "@/hooks";
 
 export const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [query, setQuery] = useState<string>("");
   const [type, setType] = useState<SearchType>("movie");
-  const { userName, favorites, cart } = useUserContext();
+  const { userName, favorites, cart } = useFirebaseContext();
 
   if (location.pathname === "/") {
     return null;

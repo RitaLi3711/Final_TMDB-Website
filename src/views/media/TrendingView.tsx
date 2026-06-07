@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ButtonGroup, FavoritesOverlay, ImageGrid } from "@/components";
 import { calculatePrice, formatPrice, getImageUrl, type ImageCell, TRENDING_ENDPOINT, type TrendingResponse } from "@/core";
-import { useTmdb, useUserContext } from "@/hooks";
+import { useFirebaseContext, useTmdb } from "@/hooks";
 
 export const TrendingView = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [type, setType] = useState<"movies" | "tv">("movies");
   const [timeWindow, setTimeWindow] = useState<"day" | "week">((searchParams.get("interval") as "day" | "week") || "day");
-  const { favorites, toggleFavorite, cart, removeFromCart } = useUserContext();
+  const { favorites, toggleFavorite, cart, removeFromCart } = useFirebaseContext();
 
   useEffect(() => {
     navigate(`/trending/${type}?interval=${timeWindow}`, { replace: true });

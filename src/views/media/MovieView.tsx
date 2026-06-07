@@ -11,13 +11,13 @@ import {
   TV_ENDPOINT,
   type TvDetailsResponse,
 } from "@/core";
-import { useTmdb, useUserContext } from "@/hooks";
+import { useFirebaseContext, useTmdb } from "@/hooks";
 
 export const MovieView = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
-  const { cart, addToCart, removeFromCart, favorites, toggleFavorite } = useUserContext();
+  const { cart, addToCart, removeFromCart, favorites, toggleFavorite } = useFirebaseContext();
 
   const isMovie = location.pathname.includes("/movie/");
   const { data } = useTmdb<MovieResponse | TvDetailsResponse>(`${isMovie ? MOVIE_ENDPOINT : TV_ENDPOINT}/${id ?? ""}`, {

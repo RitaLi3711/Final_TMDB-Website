@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components";
 import { movieGenres, tvGenres } from "@/core";
-import { useUserContext } from "@/hooks";
+import { useFirebaseContext } from "@/hooks";
 
 export const SettingsView = () => {
-  const { userName, setUserName, movieGenrePref, setMovieGenrePref, tvGenrePref, setTvGenrePref } = useUserContext();
+  const { userName, setUserName, movieGenrePref, setMovieGenrePref, tvGenrePref, setTvGenrePref } = useFirebaseContext();
   const [usernameInput, setUsernameInput] = useState(userName);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");

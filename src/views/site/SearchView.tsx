@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaFrown, FavoritesOverlay, ImageGrid, Pagination } from "@/components";
 import { calculatePrice, formatPrice, getImageUrl, type ImageCell, RATE_LIMIT_DELAY, SEARCH_ENDPOINT, type SearchResponse } from "@/core";
-import { useDebounce, useTmdb, useUserContext } from "@/hooks";
+import { useDebounce, useFirebaseContext, useTmdb } from "@/hooks";
 
 export const SearchView = () => {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ export const SearchView = () => {
   const [page, setPage] = useState(1);
   const debounced = useDebounce(query, RATE_LIMIT_DELAY);
   const { data } = useTmdb<SearchResponse>(`${SEARCH_ENDPOINT}/${type}`, { page, query: debounced });
-  const { favorites, toggleFavorite, cart, removeFromCart } = useUserContext();
+  const { favorites, toggleFavorite, cart, removeFromCart } = useFirebaseContext();
 
   const gridData: ImageCell[] = (data?.results ?? []).map((item) => {
     const releaseDate = type === "movie" ? (item as { release_date?: string }).release_date : undefined;

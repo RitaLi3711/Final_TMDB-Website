@@ -1,12 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { CartOverlay, FavoritesOverlay, ImageGrid } from "@/components";
 import { calculatePrice, formatPrice, getImageUrl, type ImageCell, TV_ENDPOINT, type TvDetailsResponse } from "@/core";
-import { useTmdb, useUserContext } from "@/hooks";
+import { useFirebaseContext, useTmdb } from "@/hooks";
 
 export const SeasonsView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { favorites, toggleFavorite, cart, addToCart, removeFromCart } = useUserContext();
+  const { favorites, toggleFavorite, cart, addToCart, removeFromCart } = useFirebaseContext();
 
   const { data } = useTmdb<TvDetailsResponse>(`${TV_ENDPOINT}/${id ?? ""}`, {});
 

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ButtonGroup, FavoritesOverlay, ImageGrid } from "@/components";
-import { useUserContext } from "@/hooks";
+import { useFirebaseContext } from "@/hooks";
 
 export const FavoritesView = () => {
   const navigate = useNavigate();
-  const { favorites, toggleFavorite, cart, removeFromCart, clearFavoritesByType } = useUserContext();
+  const { favorites, toggleFavorite, cart, removeFromCart, clearFavoritesByType } = useFirebaseContext();
   const [type, setType] = useState<"movie" | "tv">("movie");
   const filteredItems = Array.from(favorites.values()).filter((item) => item.media === type);
 

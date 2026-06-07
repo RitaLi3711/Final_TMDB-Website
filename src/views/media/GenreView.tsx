@@ -11,14 +11,14 @@ import {
   movieGenres,
   tvGenres,
 } from "@/core";
-import { useTmdb, useUserContext } from "@/hooks";
+import { useFirebaseContext, useTmdb } from "@/hooks";
 
 export const GenreView = () => {
   const navigate = useNavigate();
   const { type: urlType = "movies", genreSlug = "action" } = useParams();
   const [type, setType] = useState<"movies" | "tv">(urlType as "movies" | "tv");
   const [page, setPage] = useState(1);
-  const { favorites, toggleFavorite, movieGenrePref, tvGenrePref, cart, removeFromCart } = useUserContext();
+  const { favorites, toggleFavorite, movieGenrePref, tvGenrePref, cart, removeFromCart } = useFirebaseContext();
 
   const genres =
     type === "movies"

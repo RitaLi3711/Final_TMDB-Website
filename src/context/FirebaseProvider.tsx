@@ -1,12 +1,18 @@
-import { FirebaseContext } from "@/context";
-import type { ImageCell, UserDocument } from "@/core";
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, type User, updateProfile } from "firebase/auth";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
+import { FirebaseContext } from "@/context";
+import type { ImageCell, UserDocument } from "@/core";
 
 const firebaseConfig = {
-  // Your Firebase configuration goes here
+  apiKey: "AIzaSyCeOsh0QCApUiQfwcPeOf8mhsZTxmEgivg",
+  appId: "1:875852523536:web:d06ab57ebf086886fe4295",
+  authDomain: "summative-4f2ac.firebaseapp.com",
+  measurementId: "G-JS87V3JGSP",
+  messagingSenderId: "875852523536",
+  projectId: "summative-4f2ac",
+  storageBucket: "summative-4f2ac.firebasestorage.app",
 };
 
 export const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {

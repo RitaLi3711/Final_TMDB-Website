@@ -4,7 +4,7 @@ export * from "@/core/constants/genres";
 export * from "@/core/constants/images";
 export * from "@/core/constants/storage";
 export * from "@/core/types/components";
-export * from "@/core/types/endpoints";
+export * from "@/core/types/context";
 export * from "@/core/types/firebase";
 export * from "@/core/utils/getBackdropUrl";
 export * from "@/core/utils/getImageUrl";

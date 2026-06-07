@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ButtonGroup, FavoritesOverlay, ImageGrid, Pagination } from "@/components";
 import { calculatePrice, formatPrice, getImageUrl, type ImageCell, MOVIE_ENDPOINT, type MoviesResponse } from "@/core";
-import { useTmdb, useUserContext } from "@/hooks";
+import { useFirebaseContext, useTmdb } from "@/hooks";
 
 export const MoviesView = () => {
   const { interval } = useParams();
@@ -10,7 +10,7 @@ export const MoviesView = () => {
   const [page, setPage] = useState(1);
   const category = interval ?? "now_playing";
   const { data } = useTmdb<MoviesResponse>(`${MOVIE_ENDPOINT}/${category}`, { page });
-  const { favorites, toggleFavorite, cart, removeFromCart } = useUserContext();
+  const { favorites, toggleFavorite, cart, removeFromCart } = useFirebaseContext();
 
   const gridData: ImageCell[] = (data?.results ?? []).map((result) => ({
     id: result.id,
