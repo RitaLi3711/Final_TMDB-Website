@@ -1,9 +1,6 @@
 import { useState } from "react";
-import { FaRegHeart } from "react-icons/fa";
-import { GoGear } from "react-icons/go";
-import { PiShoppingCartSimple } from "react-icons/pi";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ButtonGroup, LinkGroup, SearchBar } from "@/components";
+import { ButtonGroup, FaRegHeart, GiExitDoor, GoGear, LinkGroup, PiShoppingCartSimple, SearchBar } from "@/components";
 import type { SearchType } from "@/core";
 import { ICON_SIZE } from "@/core";
 import { useFirebaseContext } from "@/hooks";
@@ -15,15 +12,15 @@ export const Header = () => {
   const [type, setType] = useState<SearchType>("movie");
   const { userName, favorites, cart } = useFirebaseContext();
 
-if (location.pathname === "/" || location.pathname === "/sign-in") {
-  return null;
-}
+  if (location.pathname === "/" || location.pathname === "/sign-in") {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 border-[#344966] border-b bg-[#0d1821]">
       <div className="flex items-center justify-between gap-20 px-4 pt-4">
         <div className="flex items-center gap-4">
-          <h1 className="cursor-pointer font-bold text-4xl text-[#f0f4ef]" onClick={() => navigate("/")}>
+          <h1 className="cursor-pointer font-bold text-4xl text-[#f0f4ef]">
             TMDB Explorer
           </h1>
           <LinkGroup
@@ -83,6 +80,9 @@ if (location.pathname === "/" || location.pathname === "/sign-in") {
           </button>
           <button className="rounded-full p-2 transition hover:bg-gray-700" onClick={() => navigate("/settings")}>
             <GoGear color="#f0f4ef" size={ICON_SIZE} />
+          </button>
+          <button className="rounded-full p-2 transition hover:bg-gray-700" onClick={() => navigate("/sign-in")}>
+            <GiExitDoor color="#f0f4ef" size={ICON_SIZE} />
           </button>
         </div>
       </div>

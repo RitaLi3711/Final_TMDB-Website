@@ -36,7 +36,7 @@ export const SignInView = () => {
         setUser((await signInWithEmailAndPassword(auth, email, password)).user);
       }
 
-      navigate("/now-playing");
+      navigate("/movies/category/now_playing");
     } catch (error) {
       console.error("Firebase auth submit failed:", error);
       setError((error as FirebaseError).message);
@@ -46,7 +46,7 @@ export const SignInView = () => {
   const handleGoogle = async () => {
     try {
       setUser((await signInWithPopup(auth, new GoogleAuthProvider())).user);
-      navigate("/now-playing");
+      navigate("/movies/category/now_playing");
     } catch (error) {
       console.error("Firebase OAuth sign-in failed:", error);
       setError((error as FirebaseError).message);
