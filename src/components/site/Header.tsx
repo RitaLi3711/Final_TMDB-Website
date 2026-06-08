@@ -20,9 +20,7 @@ export const Header = () => {
     <header className="sticky top-0 z-50 border-[#344966] border-b bg-[#0d1821]">
       <div className="flex items-center justify-between gap-20 px-4 pt-4">
         <div className="flex items-center gap-4">
-          <h1 className="cursor-pointer font-bold text-4xl text-[#f0f4ef]">
-            TMDB Explorer
-          </h1>
+          <h1 className="cursor-pointer font-bold text-4xl text-[#f0f4ef]">TMDB Explorer</h1>
           <LinkGroup
             options={[
               { label: "Movies", match: ["/movies"], to: "/movies/category/now_playing" },

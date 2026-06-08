@@ -25,6 +25,12 @@ export const CartView = () => {
         >
           Empty Cart
         </button>
+        <button
+          className="rounded-md bg-[#bfcc94] px-4 py-2 font-semibold text-[#0D1821] text-sm transition hover:bg-[#e6aace]"
+          onClick={clearCart}
+        >
+          Purchase{" "}
+        </button>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-700 bg-[#081325]">
