@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components";
 import { movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
@@ -9,8 +9,10 @@ export const SettingsView = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    setUsernameInput(userName);
+  }, [userName]);
 
-  
   const toggleGenre = (genreSlug: string, currentPreferences: string[], updatePreferences: (slugs: string[]) => void) => {
     updatePreferences(
       currentPreferences.includes(genreSlug) ? currentPreferences.filter((slug) => slug !== genreSlug) : [...currentPreferences, genreSlug],
