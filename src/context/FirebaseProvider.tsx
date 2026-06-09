@@ -29,28 +29,43 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     return { auth: getAuth(app), firestore: getFirestore(app) };
   }, []);
 
+  // Helper function to save all data to Firestore
+  const saveToFirestore = async (updates: {
+    favorites?: Map<number, ImageCell>;
+    cart?: Map<number, ImageCell>;
+    movieGenrePref?: string[];
+    tvGenrePref?: string[];
+  }) => {
+    if (!user) return;
+
+    const dataToSave = {
+      cart: Object.fromEntries(updates.cart ?? cart),
+      favorites: Object.fromEntries(updates.favorites ?? favorites),
+      movieGenrePref: updates.movieGenrePref ?? movieGenrePref,
+      tvGenrePref: updates.tvGenrePref ?? tvGenrePref,
+    };
+
+    await setDoc(doc(firestore, "users", user.uid), dataToSave, { merge: true });
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
           const snapshot = await getDoc(doc(firestore, "users", user.uid));
           const userData = snapshot.data();
-          const favoritesData = userData?.favorites || {};
-          const cartData = userData?.cart || {};
-          const moviePrefs = userData?.movieGenrePref || movieGenres.map((genre) => genre.slug);
-          const tvPrefs = userData?.tvGenrePref || tvGenres.map((genre) => genre.slug);
-
+          
           setUser(user);
-          setFavorites(new Map(Object.entries(favoritesData).map(([k, v]) => [Number(k), v as unknown as ImageCell])));
-          setCart(new Map(Object.entries(cartData).map(([k, v]) => [Number(k), v as unknown as ImageCell])));
-          setMovieGenrePref(moviePrefs);
-          setTvGenrePref(tvPrefs);
+          setFavorites(new Map(Object.entries(userData?.favorites || {}).map(([k, v]) => [Number(k), v as ImageCell])));
+          setCart(new Map(Object.entries(userData?.cart || {}).map(([k, v]) => [Number(k), v as ImageCell])));
+          setMovieGenrePref(userData?.movieGenrePref || movieGenres.map(g => g.slug));
+          setTvGenrePref(userData?.tvGenrePref || tvGenres.map(g => g.slug));
         } else {
           setUser(null);
           setFavorites(new Map());
           setCart(new Map());
-          setMovieGenrePref(movieGenres.map((genre) => genre.slug));
-          setTvGenrePref(tvGenres.map((genre) => genre.slug));
+          setMovieGenrePref(movieGenres.map(g => g.slug));
+          setTvGenrePref(tvGenres.map(g => g.slug));
         }
       } catch (error) {
         console.error("User sync error:", error);
@@ -63,97 +78,52 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   }, [auth, firestore]);
 
   const refreshUser = async (updates: { displayName?: string; photoURL?: string }) => {
-    if (!auth.currentUser) {
-      return;
-    }
+    if (!auth.currentUser) return;
 
     try {
       await updateProfile(auth.currentUser, updates);
       await auth.currentUser.reload();
-      setUser(Object.assign(Object.create(Object.getPrototypeOf(auth.currentUser)), auth.currentUser));
+      setUser(auth.currentUser);
     } catch (error) {
       console.error("Refresh error:", error);
     }
   };
 
-  const setUserName = async (name: string) => {
-    await refreshUser({ displayName: name });
-  };
+  const setUserName = (name: string) => refreshUser({ displayName: name });
 
   const toggleFavorite = async (image: ImageCell) => {
     const next = new Map(favorites);
     next.has(image.id) ? next.delete(image.id) : next.set(image.id, image);
     setFavorites(next);
-
-    if (user) {
-      await setDoc(doc(firestore, "users", user.uid), {
-        cart: Object.fromEntries(cart),
-        favorites: Object.fromEntries(next),
-        movieGenrePref,
-        tvGenrePref,
-      });
-    }
+    await saveToFirestore({ favorites: next });
   };
 
   const addToCart = async (image: ImageCell) => {
     const next = new Map(cart);
     next.set(image.id, image);
     setCart(next);
-
-    if (user) {
-      await setDoc(doc(firestore, "users", user.uid), {
-        cart: Object.fromEntries(next),
-        favorites: Object.fromEntries(favorites),
-        movieGenrePref,
-        tvGenrePref,
-      });
-    }
+    await saveToFirestore({ cart: next });
   };
 
   const removeFromCart = async (id: number) => {
     const next = new Map(cart);
     next.delete(id);
     setCart(next);
-
-    if (user) {
-      await setDoc(doc(firestore, "users", user.uid), {
-        cart: Object.fromEntries(next),
-        favorites: Object.fromEntries(favorites),
-        movieGenrePref,
-        tvGenrePref,
-      });
-    }
+    await saveToFirestore({ cart: next });
   };
 
   const clearCart = async () => {
     setCart(new Map());
-    if (user) {
-      await setDoc(doc(firestore, "users", user.uid), {
-        cart: {},
-        favorites: Object.fromEntries(favorites),
-        movieGenrePref,
-        tvGenrePref,
-      });
-    }
+    await saveToFirestore({ cart: new Map() });
   };
 
   const clearFavoritesByType = async (mediaType: "movie" | "tv") => {
     const newFavorites = new Map(favorites);
     for (const [id, item] of favorites) {
-      if (item.media === mediaType) {
-        newFavorites.delete(id);
-      }
+      if (item.media === mediaType) newFavorites.delete(id);
     }
     setFavorites(newFavorites);
-
-    if (user) {
-      await setDoc(doc(firestore, "users", user.uid), {
-        cart: Object.fromEntries(cart),
-        favorites: Object.fromEntries(newFavorites),
-        movieGenrePref,
-        tvGenrePref,
-      });
-    }
+    await saveToFirestore({ favorites: newFavorites });
   };
 
   const userName = user?.displayName || user?.email?.split("@")[0] || "Guest";

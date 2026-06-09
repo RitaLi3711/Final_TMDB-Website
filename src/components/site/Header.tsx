@@ -10,7 +10,7 @@ export const Header = () => {
   const location = useLocation();
   const [query, setQuery] = useState<string>("");
   const [type, setType] = useState<SearchType>("movie");
-  const { userName, favorites, cart } = useFirebaseContext();
+  const { user, userName, favorites, cart } = useFirebaseContext();
 
   if (location.pathname === "/" || location.pathname === "/sign-in") {
     return null;
@@ -55,8 +55,9 @@ export const Header = () => {
       </div>
 
       <div className="flex items-center justify-between px-4 pt-2 pb-4">
-        <div className="text-2xl">
-          Welcome, <span className="font-semibold text-[#BFCC94]">{userName}</span>
+        <div className="flex items-center gap-3 rounded-full border border-[#2f4663] bg-[#14253b] px-4 py-2">
+          <img alt={userName} className="h-8 w-8 rounded-full" src={user?.photoURL ?? undefined} />
+          <span className="font-semibold text-[#f8fafc] text-sm">Welcome, {userName}</span>
         </div>
         <div className="flex items-center gap-2">
           <button className="relative rounded-full p-2 transition hover:bg-gray-700" onClick={() => navigate("/favorites")}>
