@@ -1,10 +1,11 @@
+import { updatePassword } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Button } from "@/components";
 import { movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const SettingsView = () => {
-  const { userName, setUserName, movieGenrePref, setMovieGenrePref, tvGenrePref, setTvGenrePref } = useFirebaseContext();
+  const { auth, userName, setUserName, movieGenrePref, setMovieGenrePref, tvGenrePref, setTvGenrePref } = useFirebaseContext();
   const [usernameInput, setUsernameInput] = useState(userName);
   const [nameSuccess, setNameSuccess] = useState("");
   const [nameError, setNameError] = useState("");
@@ -49,8 +50,22 @@ export const SettingsView = () => {
       return;
     }
 
-    setPasswordSuccess("Password updated successfully");
-    setPasswordError("");
+    try {
+      if (!auth.currentUser) {
+        throw new Error("No user is signed in");
+      }
+
+      await updatePassword(auth.currentUser, newPassword);
+
+      setPasswordSuccess("Password updated successfully");
+      setPasswordError("");
+
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      setPasswordError((error as Error).message);
+      setPasswordSuccess("");
+    }
   };
 
   return (
