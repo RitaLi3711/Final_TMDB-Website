@@ -23,13 +23,13 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   const [cart, setCart] = useState<Map<number, ImageCell>>(new Map());
   const [movieGenrePref, setMovieGenrePref] = useState<string[]>([]);
   const [tvGenrePref, setTvGenrePref] = useState<string[]>([]);
+  const [userNameState, setUserNameState] = useState<string>("Guest"); // ← FIXED
 
   const { auth, firestore } = useMemo(() => {
     const app = initializeApp(firebaseConfig);
     return { auth: getAuth(app), firestore: getFirestore(app) };
   }, []);
 
-  // Helper function to save all data to Firestore
   const saveToFirestore = async (updates: {
     favorites?: Map<number, ImageCell>;
     cart?: Map<number, ImageCell>;
@@ -49,23 +49,28 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   useEffect(() => {
+    const name = user?.displayName || user?.email?.split("@")[0] || "Guest";
+    setUserNameState(name);
+  }, [user]);
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
           const snapshot = await getDoc(doc(firestore, "users", user.uid));
           const userData = snapshot.data();
-          
+
           setUser(user);
           setFavorites(new Map(Object.entries(userData?.favorites || {}).map(([k, v]) => [Number(k), v as ImageCell])));
           setCart(new Map(Object.entries(userData?.cart || {}).map(([k, v]) => [Number(k), v as ImageCell])));
-          setMovieGenrePref(userData?.movieGenrePref || movieGenres.map(g => g.slug));
-          setTvGenrePref(userData?.tvGenrePref || tvGenres.map(g => g.slug));
+          setMovieGenrePref(userData?.movieGenrePref || movieGenres.map((g) => g.slug));
+          setTvGenrePref(userData?.tvGenrePref || tvGenres.map((g) => g.slug));
         } else {
           setUser(null);
           setFavorites(new Map());
           setCart(new Map());
-          setMovieGenrePref(movieGenres.map(g => g.slug));
-          setTvGenrePref(tvGenres.map(g => g.slug));
+          setMovieGenrePref(movieGenres.map((g) => g.slug));
+          setTvGenrePref(tvGenres.map((g) => g.slug));
         }
       } catch (error) {
         console.error("User sync error:", error);
@@ -83,7 +88,10 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     try {
       await updateProfile(auth.currentUser, updates);
       await auth.currentUser.reload();
-      setUser(auth.currentUser);
+      const updatedUser = auth.currentUser;
+      setUser({ ...updatedUser });
+      const newName = updatedUser.displayName || updatedUser.email?.split("@")[0] || "Guest";
+      setUserNameState(newName);
     } catch (error) {
       console.error("Refresh error:", error);
     }
@@ -126,8 +134,6 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     await saveToFirestore({ favorites: newFavorites });
   };
 
-  const userName = user?.displayName || user?.email?.split("@")[0] || "Guest";
-
   if (loading) return <p className="text-center text-gray-400">Loading...</p>;
 
   return (
@@ -150,7 +156,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
         toggleFavorite,
         tvGenrePref,
         user,
-        userName,
+        userName: userNameState,
       }}
     >
       {children}
