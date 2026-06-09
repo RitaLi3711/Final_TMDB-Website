@@ -8,6 +8,8 @@ export const SettingsView = () => {
   const [usernameInput, setUsernameInput] = useState(userName);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
     setUsernameInput(userName);
@@ -30,6 +32,13 @@ export const SettingsView = () => {
     setErrorMessage("");
   };
 
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmPassword) {
+      setErrorMessage("Passwords do not match");
+      return;
+    }
+  };
+
   return (
     <section className="mx-auto w-full max-w-7xl space-y-5 p-5">
       <div className="flex items-center justify-between">
@@ -37,38 +46,63 @@ export const SettingsView = () => {
       </div>
 
       <div className="flex items-start gap-8">
-        <div className="w-full max-w-md rounded-2xl border border-gray-700 bg-gray-900 p-4">
-          <h2 className="font-semibold text-lg">Profile</h2>
-          <p className="mb-2 text-gray-400 text-sm">Update your display profile</p>
+        <div className="w-full max-w-md space-y-4">
+          <div className="rounded-2xl border border-gray-700 bg-gray-900 p-4">
+            <h2 className="font-semibold text-lg">Profile</h2>
+            <p className="mb-2 text-gray-400 text-sm">Update your display profile</p>
 
-          <label className="text-gray-300 text-sm" htmlFor="username">
-            Username
-          </label>
-          <input
-            autoComplete="username"
-            className="mb-3 w-full rounded-lg border border-gray-700 bg-gray-800 px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            id="username"
-            name="username"
-            onChange={(event) => {
-              setUsernameInput(event.target.value);
-              setSuccessMessage("");
-              setErrorMessage("");
-            }}
-            type="text"
-            value={usernameInput}
-          />
+            <label className="text-gray-300 text-sm" htmlFor="username">
+              Username
+            </label>
+            <input
+              autoComplete="username"
+              className="mb-3 w-full rounded-lg border border-gray-700 bg-gray-800 px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              id="username"
+              name="username"
+              onChange={(event) => {
+                setUsernameInput(event.target.value);
+                setSuccessMessage("");
+                setErrorMessage("");
+              }}
+              type="text"
+              value={usernameInput}
+            />
 
-          <div className="flex items-center justify-end gap-2">
-            {successMessage && <p className="text-green-400 text-xs">{successMessage}</p>}
-            {errorMessage && <p className="text-red-400 text-xs">{errorMessage}</p>}
-            <div className="scale-90">
-              <Button onClick={() => setUsernameInput(userName)} variant="grey">
-                Reset
-              </Button>
+            <div className="flex items-center justify-end gap-2">
+              {successMessage && <p className="text-green-400 text-xs">{successMessage}</p>}
+              {errorMessage && <p className="text-red-400 text-xs">{errorMessage}</p>}
+              <div className="scale-90">
+                <Button onClick={() => setUsernameInput(userName)} variant="grey">
+                  Reset
+                </Button>
+              </div>
+              <div className="scale-90">
+                <Button onClick={saveUsername}>Save</Button>
+              </div>
             </div>
-            <div className="scale-90">
-              <Button onClick={saveUsername}>Save</Button>
-            </div>
+          </div>
+
+          <div className="rounded-2xl border border-gray-700 bg-gray-900 p-4">
+            <h2 className="font-semibold text-lg">Security</h2>
+            <p className="mb-4 text-gray-400 text-sm">Change your account password</p>
+
+            <input
+              className="mb-3 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="New password"
+              type="password"
+              value={newPassword}
+            />
+
+            <input
+              className="mb-4 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm password"
+              type="password"
+              value={confirmPassword}
+            />
+
+            <Button onClick={handlePasswordChange}>Update Password</Button>
           </div>
         </div>
 
