@@ -18,7 +18,7 @@ export const SettingsView = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const [menu, setMenu] = useState<"account" | "purchases">((searchParams.get("menu") as "account" | "purchases") || "account");
+  const menu = (searchParams.get("menu") as "account" | "purchases") || "account";
 
   useEffect(() => {
     setUsernameInput(userName);
@@ -83,7 +83,7 @@ export const SettingsView = () => {
         <h1 className="font-bold text-3xl text-white">Settings</h1>
 
         <ButtonGroup
-          onClick={(value) => setMenu(value as "account" | "purchases")}
+          onClick={(value) => navigate(`/settings?menu=${value}`, { replace: true })}
           options={[
             { label: "Account", value: "account" },
             { label: "Purchases", value: "purchases" },
