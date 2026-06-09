@@ -6,8 +6,11 @@ import { useFirebaseContext } from "@/hooks";
 export const SettingsView = () => {
   const { userName, setUserName, movieGenrePref, setMovieGenrePref, tvGenrePref, setTvGenrePref } = useFirebaseContext();
   const [usernameInput, setUsernameInput] = useState(userName);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [nameSuccess, setNameSuccess] = useState("");
+  const [nameError, setNameError] = useState("");
+
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -23,20 +26,31 @@ export const SettingsView = () => {
 
   const saveUsername = () => {
     if (!usernameInput) {
-      setErrorMessage("Username cannot be empty");
-      setSuccessMessage("");
+      setNameError("Username cannot be empty");
+      setNameSuccess("");
       return;
     }
+
     setUserName(usernameInput.trim());
-    setSuccessMessage("Profile updated successfully");
-    setErrorMessage("");
+    setNameSuccess("Profile updated successfully");
+    setNameError("");
   };
 
   const handlePasswordChange = async () => {
-    if (newPassword !== confirmPassword) {
-      setErrorMessage("Passwords do not match");
+    if (!newPassword || !confirmPassword) {
+      setPasswordError("Please fill in both password fields");
+      setPasswordSuccess("");
       return;
     }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      setPasswordSuccess("");
+      return;
+    }
+
+    setPasswordSuccess("Password updated successfully");
+    setPasswordError("");
   };
 
   return (
@@ -61,16 +75,17 @@ export const SettingsView = () => {
               name="username"
               onChange={(event) => {
                 setUsernameInput(event.target.value);
-                setSuccessMessage("");
-                setErrorMessage("");
+                setNameSuccess("");
+                setNameError("");
               }}
               type="text"
               value={usernameInput}
             />
 
             <div className="flex items-center justify-end gap-2">
-              {successMessage && <p className="text-green-400 text-xs">{successMessage}</p>}
-              {errorMessage && <p className="text-red-400 text-xs">{errorMessage}</p>}
+              {nameSuccess && <p className="text-green-400 text-xs">{nameSuccess}</p>}
+
+              {nameError && <p className="text-red-400 text-xs">{nameError}</p>}
               <div className="scale-90">
                 <Button onClick={() => setUsernameInput(userName)} variant="grey">
                   Reset
@@ -88,7 +103,11 @@ export const SettingsView = () => {
 
             <input
               className="mb-3 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={(e) => setNewPassword(e.target.value)}
+              onChange={(event) => {
+                setNewPassword(event.target.value);
+                setPasswordSuccess("");
+                setPasswordError("");
+              }}
               placeholder="New password"
               type="password"
               value={newPassword}
@@ -96,13 +115,22 @@ export const SettingsView = () => {
 
             <input
               className="mb-4 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(event) => {
+                setConfirmPassword(event.target.value);
+                setPasswordSuccess("");
+                setPasswordError("");
+              }}
               placeholder="Confirm password"
               type="password"
               value={confirmPassword}
             />
 
             <Button onClick={handlePasswordChange}>Update Password</Button>
+            <div className="mt-2">
+              {passwordSuccess && <p className="text-green-400 text-xs">{passwordSuccess}</p>}
+
+              {passwordError && <p className="text-red-400 text-xs">{passwordError}</p>}
+            </div>
           </div>
         </div>
 
