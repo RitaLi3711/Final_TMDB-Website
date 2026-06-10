@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaRegHeart, FaRegTrashAlt } from "@/components";
 import { calculatePrice, formatPrice, ICON_SIZE, TAX_RATE } from "@/core";
 import { useFirebaseContext } from "@/hooks";
@@ -7,7 +8,7 @@ export const CartView = () => {
   const { cart, removeFromCart, favorites, toggleFavorite, clearCart } = useFirebaseContext();
   const items = Array.from(cart.values());
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-
+  const navigate = useNavigate();
   const subtotal = items.reduce((sum, item) => sum + calculatePrice(item.airDate || item.releaseDate || ""), 0);
 
   return items.length === 0 ? (
@@ -132,9 +133,10 @@ export const CartView = () => {
 
               <button
                 className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white"
-                onClick={() => {
-                  clearCart();
+                onClick={async () => {
+                  await clearCart();
                   setShowPurchaseModal(false);
+                  navigate("/success");
                 }}
               >
                 Confirm
