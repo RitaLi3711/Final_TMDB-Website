@@ -259,7 +259,7 @@ export const SettingsView = () => {
       ) : (
         <div className="rounded-2xl border border-gray-700 bg-gray-900 p-6">
           <h2 className="font-semibold text-lg">Orders</h2>
-          <p className="text-gray-400 text-sm">No purchases yet.</p>
+          <p className="mt-6 text-gray-400 text-sm">No purchases yet.</p>
         </div>
       )}
     </section>
