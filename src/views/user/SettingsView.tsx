@@ -21,15 +21,16 @@ export const SettingsView = () => {
   const menu = (searchParams.get("menu") as "account" | "purchases") || "account";
   const [selectedAvatar, setSelectedAvatar] = useState(avatar);
   const [selectedMovieGenres, setSelectedMovieGenres] = useState(movieGenrePref);
-const [selectedTvGenres, setSelectedTvGenres] = useState(tvGenrePref);
+  const [selectedTvGenres, setSelectedTvGenres] = useState(tvGenrePref);
+  const [genreSuccess, setGenreSuccess] = useState("");
 
-useEffect(() => {
-  setSelectedMovieGenres(movieGenrePref);
-}, [movieGenrePref]);
+  useEffect(() => {
+    setSelectedMovieGenres(movieGenrePref);
+  }, [movieGenrePref]);
 
-useEffect(() => {
-  setSelectedTvGenres(tvGenrePref);
-}, [tvGenrePref]);
+  useEffect(() => {
+    setSelectedTvGenres(tvGenrePref);
+  }, [tvGenrePref]);
 
   useEffect(() => {
     setUsernameInput(userName);
@@ -44,6 +45,8 @@ useEffect(() => {
   }, [avatar]);
 
   const toggleGenre = (genreSlug: string, currentPreferences: string[], updatePreferences: (slugs: string[]) => void) => {
+    setGenreSuccess("");
+
     updatePreferences(
       currentPreferences.includes(genreSlug) ? currentPreferences.filter((slug) => slug !== genreSlug) : [...currentPreferences, genreSlug],
     );
@@ -200,16 +203,10 @@ useEffect(() => {
                 {movieGenres.map(({ value: genreId, label: genreName, slug }) => (
                   <label className="flex items-center gap-2 text-sm" key={genreId}>
                     <input
-  type="checkbox"
-  className="accent-[#BFCC94]"
-  checked={selectedMovieGenres.includes(slug)}
-  onChange={() =>
-    toggleGenre(
-      slug,
-      selectedMovieGenres,
-      setSelectedMovieGenres
-    )
-  }
+                      checked={selectedMovieGenres.includes(slug)}
+                      className="accent-[#BFCC94]"
+                      onChange={() => toggleGenre(slug, selectedMovieGenres, setSelectedMovieGenres)}
+                      type="checkbox"
                     />
                     {genreName}
                   </label>
@@ -218,39 +215,37 @@ useEffect(() => {
             </div>
 
             <div className="mt-4">
-  <h3 className="mb-2 font-semibold text-sm text-white">TV</h3>
-  <div className="grid grid-cols-3 gap-y-2">
-    {tvGenres.map(({ value: genreId, label: genreName, slug }) => (
-      <label className="flex items-center gap-2 text-sm" key={genreId}>
-        <input
-          type="checkbox"
-          className="accent-[#BFCC94]"
-          checked={selectedTvGenres.includes(slug)}
-          onChange={() =>
-            toggleGenre(
-              slug,
-              selectedTvGenres,
-              setSelectedTvGenres
-            )
-          }
-        />
-        {genreName}
-      </label>
-    ))}
-  </div>
-</div>
+              <h3 className="mb-2 font-semibold text-sm text-white">TV</h3>
+              <div className="grid grid-cols-3 gap-y-2">
+                {tvGenres.map(({ value: genreId, label: genreName, slug }) => (
+                  <label className="flex items-center gap-2 text-sm" key={genreId}>
+                    <input
+                      checked={selectedTvGenres.includes(slug)}
+                      className="accent-[#BFCC94]"
+                      onChange={() => toggleGenre(slug, selectedTvGenres, setSelectedTvGenres)}
+                      type="checkbox"
+                    />
+                    {genreName}
+                  </label>
+                ))}
+              </div>
+            </div>
 
-<div className="mt-6">
-  <Button
-    onClick={() => {
-      setMovieGenrePref(selectedMovieGenres);
-      setTvGenrePref(selectedTvGenres);
-    }}
-  >
-    Save Preferences
-  </Button>
-</div>
-</div>
+            {genreSuccess && <p className="mt-4 text-center text-green-400 text-sm">{genreSuccess}</p>}
+
+            <div className="mt-6 flex justify-center">
+              <Button
+                onClick={() => {
+                  setMovieGenrePref(selectedMovieGenres);
+                  setTvGenrePref(selectedTvGenres);
+
+                  setGenreSuccess("Genre preferences saved successfully");
+                }}
+              >
+                Save Preferences
+              </Button>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="rounded-2xl border border-gray-700 bg-gray-900 p-6">
