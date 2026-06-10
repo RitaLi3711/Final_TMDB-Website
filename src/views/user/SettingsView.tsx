@@ -20,6 +20,16 @@ export const SettingsView = () => {
   const navigate = useNavigate();
   const menu = (searchParams.get("menu") as "account" | "purchases") || "account";
   const [selectedAvatar, setSelectedAvatar] = useState(avatar);
+  const [selectedMovieGenres, setSelectedMovieGenres] = useState(movieGenrePref);
+const [selectedTvGenres, setSelectedTvGenres] = useState(tvGenrePref);
+
+useEffect(() => {
+  setSelectedMovieGenres(movieGenrePref);
+}, [movieGenrePref]);
+
+useEffect(() => {
+  setSelectedTvGenres(tvGenrePref);
+}, [tvGenrePref]);
 
   useEffect(() => {
     setUsernameInput(userName);
@@ -190,10 +200,16 @@ export const SettingsView = () => {
                 {movieGenres.map(({ value: genreId, label: genreName, slug }) => (
                   <label className="flex items-center gap-2 text-sm" key={genreId}>
                     <input
-                      checked={movieGenrePref.includes(slug)}
-                      className="accent-[#BFCC94]"
-                      onChange={() => toggleGenre(slug, movieGenrePref, setMovieGenrePref)}
-                      type="checkbox"
+  type="checkbox"
+  className="accent-[#BFCC94]"
+  checked={selectedMovieGenres.includes(slug)}
+  onChange={() =>
+    toggleGenre(
+      slug,
+      selectedMovieGenres,
+      setSelectedMovieGenres
+    )
+  }
                     />
                     {genreName}
                   </label>
@@ -202,22 +218,39 @@ export const SettingsView = () => {
             </div>
 
             <div className="mt-4">
-              <h3 className="mb-2 font-semibold text-sm text-white">TV</h3>
-              <div className="grid grid-cols-3 gap-y-2">
-                {tvGenres.map(({ value: genreId, label: genreName, slug }) => (
-                  <label className="flex items-center gap-2 text-sm" key={genreId}>
-                    <input
-                      checked={tvGenrePref.includes(slug)}
-                      className="accent-[#BFCC94]"
-                      onChange={() => toggleGenre(slug, tvGenrePref, setTvGenrePref)}
-                      type="checkbox"
-                    />
-                    {genreName}
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
+  <h3 className="mb-2 font-semibold text-sm text-white">TV</h3>
+  <div className="grid grid-cols-3 gap-y-2">
+    {tvGenres.map(({ value: genreId, label: genreName, slug }) => (
+      <label className="flex items-center gap-2 text-sm" key={genreId}>
+        <input
+          type="checkbox"
+          className="accent-[#BFCC94]"
+          checked={selectedTvGenres.includes(slug)}
+          onChange={() =>
+            toggleGenre(
+              slug,
+              selectedTvGenres,
+              setSelectedTvGenres
+            )
+          }
+        />
+        {genreName}
+      </label>
+    ))}
+  </div>
+</div>
+
+<div className="mt-6">
+  <Button
+    onClick={() => {
+      setMovieGenrePref(selectedMovieGenres);
+      setTvGenrePref(selectedTvGenres);
+    }}
+  >
+    Save Preferences
+  </Button>
+</div>
+</div>
         </div>
       ) : (
         <div className="rounded-2xl border border-gray-700 bg-gray-900 p-6">
