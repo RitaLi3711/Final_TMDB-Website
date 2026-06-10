@@ -21,8 +21,8 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   const [user, setUser] = useState<User | null>(null);
   const [favorites, setFavorites] = useState<Map<number, ImageCell>>(new Map());
   const [cart, setCart] = useState<Map<number, ImageCell>>(new Map());
-  const [movieGenrePref, setMovieGenrePref] = useState<string[]>([]);
-  const [tvGenrePref, setTvGenrePref] = useState<string[]>([]);
+  const [movieGenrePref, setMovieGenrePrefState] = useState<string[]>([]);
+  const [tvGenrePref, setTvGenrePrefState] = useState<string[]>([]);
   const [userNameState, setUserNameState] = useState<string>("Guest");
   const [avatar, setAvatarState] = useState<string>("");
 
@@ -66,15 +66,16 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
           setUser(user);
           setFavorites(new Map(Object.entries(userData?.favorites || {}).map(([k, v]) => [Number(k), v as ImageCell])));
           setCart(new Map(Object.entries(userData?.cart || {}).map(([k, v]) => [Number(k), v as ImageCell])));
-          setMovieGenrePref(userData?.movieGenrePref || movieGenres.map((g) => g.slug));
-          setTvGenrePref(userData?.tvGenrePref || tvGenres.map((g) => g.slug));
+          setMovieGenrePrefState(userData?.movieGenrePref || movieGenres.map((g) => g.slug));
+
+          setTvGenrePrefState(userData?.tvGenrePref || tvGenres.map((g) => g.slug));
           setAvatarState(userData?.avatar || "");
         } else {
           setUser(null);
           setFavorites(new Map());
           setCart(new Map());
-          setMovieGenrePref(movieGenres.map((g) => g.slug));
-          setTvGenrePref(tvGenres.map((g) => g.slug));
+          setMovieGenrePrefState(movieGenres.map((g) => g.slug));
+          setTvGenrePrefState(tvGenres.map((g) => g.slug));
           setAvatarState("");
         }
       } catch (error) {
@@ -86,6 +87,22 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
     return () => unsubscribe();
   }, [auth, firestore]);
+
+  const setMovieGenrePref = async (genres: string[]) => {
+    setMovieGenrePrefState(genres);
+
+    await saveToFirestore({
+      movieGenrePref: genres,
+    });
+  };
+
+  const setTvGenrePref = async (genres: string[]) => {
+    setTvGenrePrefState(genres);
+
+    await saveToFirestore({
+      tvGenrePref: genres,
+    });
+  };
 
   const refreshUser = async (updates: { displayName?: string; photoURL?: string }) => {
     if (!auth.currentUser) return;
