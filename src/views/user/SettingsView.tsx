@@ -209,8 +209,8 @@ export const SettingsView = () => {
         </div>
       ) : (
         <div className="rounded-2xl border border-gray-700 bg-gray-900 p-6">
-          <h2 className="font-semibold text-lg">Purchases</h2>
-          <p className="text-gray-400 text-sm">Your purchase history will appear here.</p>
+          <h2 className="font-semibold text-lg">Orders</h2>
+          <p className="text-gray-400 text-sm">No purchases yet.</p>
         </div>
       )}
     </section>
