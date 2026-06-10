@@ -21,18 +21,22 @@ export const CartView = () => {
     <section className="mx-auto w-full max-w-7xl p-6">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-bold text-3xl text-white">Cart</h1>
-        <button
-          className="rounded-md bg-red-500 px-4 py-2 font-semibold text-sm text-white transition hover:bg-red-600"
-          onClick={clearCart}
-        >
-          Empty Cart
-        </button>
-        <button
-          className="rounded-md bg-[#bfcc94] px-4 py-2 font-semibold text-[#0D1821] text-sm transition hover:bg-[#e6aace]"
-          onClick={() => setShowPurchaseModal(true)}
-        >
-          Purchase
-        </button>
+
+        <div className="flex gap-3">
+          <button
+            className="rounded-md bg-red-500 px-4 py-2 font-semibold text-sm text-white transition hover:bg-red-600"
+            onClick={clearCart}
+          >
+            Empty Cart
+          </button>
+
+          <button
+            className="rounded-md bg-[#bfcc94] px-4 py-2 font-semibold text-[#0D1821] text-sm transition hover:bg-[#e6aace]"
+            onClick={() => setShowPurchaseModal(true)}
+          >
+            Purchase
+          </button>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-700 bg-[#081325]">
