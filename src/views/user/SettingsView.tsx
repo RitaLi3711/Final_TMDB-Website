@@ -2,7 +2,7 @@ import { updatePassword } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AvatarSelector, Button, ButtonGroup } from "@/components";
-import { AVATARS, movieGenres, tvGenres } from "@/core";
+import { AVATARS, formatPrice, movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const SettingsView = () => {
@@ -23,6 +23,7 @@ export const SettingsView = () => {
   const [selectedMovieGenres, setSelectedMovieGenres] = useState(movieGenrePref);
   const [selectedTvGenres, setSelectedTvGenres] = useState(tvGenrePref);
   const [genreSuccess, setGenreSuccess] = useState("");
+  const { purchases } = useFirebaseContext();
 
   useEffect(() => {
     setSelectedMovieGenres(movieGenrePref);
@@ -257,9 +258,26 @@ export const SettingsView = () => {
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-gray-700 bg-gray-900 p-6">
-          <h2 className="font-semibold text-lg">Orders</h2>
-          <p className="mt-6 text-gray-400 text-sm">No purchases yet.</p>
+        <div className="rounded-3xl border border-slate-700 p-8">
+          <h2 className="mb-6 font-bold text-white text-xl">Orders</h2>
+
+          <div className="space-y-3">
+            {purchases.map((purchase) => (
+              <div className="rounded-xl border border-slate-600 bg-[#1b2940] p-4" key={purchase.date}>
+                <div className="mb-3 flex items-center justify-between">
+                  <p className="text-gray-300 text-sm">{new Date(purchase.date).toLocaleString()}</p>
+
+                  <p className="font-bold text-[#4da3ff] text-lg">{formatPrice(purchase.total)}</p>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {purchase.items.map((item) => (
+                    <img alt={item.primaryText} className="h-20 w-14 rounded object-cover" key={item.id} src={item.imageUrl} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </section>
