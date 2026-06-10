@@ -6,7 +6,8 @@ import { AVATARS, movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const SettingsView = () => {
-  const { auth, userName, setUserName, movieGenrePref, setMovieGenrePref, tvGenrePref, setTvGenrePref } = useFirebaseContext();
+  const { auth, userName, setUserName, movieGenrePref, setMovieGenrePref, tvGenrePref, setTvGenrePref, avatar, setAvatar } =
+    useFirebaseContext();
   const [usernameInput, setUsernameInput] = useState(userName);
   const [nameSuccess, setNameSuccess] = useState("");
   const [nameError, setNameError] = useState("");
@@ -17,9 +18,8 @@ export const SettingsView = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [avatar, setAvatar] = useState(AVATARS[0]);
-
   const menu = (searchParams.get("menu") as "account" | "purchases") || "account";
+  const [selectedAvatar, setSelectedAvatar] = useState(avatar);
 
   useEffect(() => {
     setUsernameInput(userName);
@@ -29,13 +29,17 @@ export const SettingsView = () => {
     navigate(`/settings?menu=${menu}`, { replace: true });
   }, [menu, navigate]);
 
+  useEffect(() => {
+    setSelectedAvatar(avatar);
+  }, [avatar]);
+
   const toggleGenre = (genreSlug: string, currentPreferences: string[], updatePreferences: (slugs: string[]) => void) => {
     updatePreferences(
       currentPreferences.includes(genreSlug) ? currentPreferences.filter((slug) => slug !== genreSlug) : [...currentPreferences, genreSlug],
     );
   };
 
-  const saveUsername = () => {
+  const saveUsername = async () => {
     if (!usernameInput) {
       setNameError("Username cannot be empty");
       setNameSuccess("");
@@ -43,6 +47,8 @@ export const SettingsView = () => {
     }
 
     setUserName(usernameInput.trim());
+    await setAvatar(selectedAvatar);
+
     setNameSuccess("Profile updated successfully");
     setNameError("");
   };
@@ -100,8 +106,7 @@ export const SettingsView = () => {
               <h2 className="font-semibold text-lg">Profile</h2>
               <p className="mb-2 text-gray-400 text-sm">Update your display profile</p>
 
-              <AvatarSelector avatars={AVATARS} onChange={setAvatar} value={avatar} />
-
+              <AvatarSelector avatars={AVATARS} onChange={setSelectedAvatar} value={selectedAvatar} />
               <input
                 autoComplete="username"
                 className="mb-3 w-full rounded-lg border border-gray-700 bg-gray-800 px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -121,7 +126,14 @@ export const SettingsView = () => {
 
                 {nameError && <p className="text-red-400 text-xs">{nameError}</p>}
                 <div className="scale-90">
-                  <Button onClick={() => setUsernameInput(userName)} variant="grey">
+                  <Button
+                    onClick={() => {
+                      setUsernameInput(userName);
+                      setSelectedAvatar(avatar);
+                    }}
+                    variant="grey"
+                  >
+                    {" "}
                     Reset
                   </Button>
                 </div>

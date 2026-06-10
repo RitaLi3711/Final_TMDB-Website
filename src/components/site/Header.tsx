@@ -10,7 +10,8 @@ export const Header = () => {
   const location = useLocation();
   const [query, setQuery] = useState<string>("");
   const [type, setType] = useState<SearchType>("movie");
-  const { user, userName, favorites, cart } = useFirebaseContext();
+  const { userName, favorites, cart } = useFirebaseContext();
+  const { avatar } = useFirebaseContext();
 
   if (location.pathname === "/" || location.pathname === "/sign-in") {
     return null;
@@ -56,7 +57,7 @@ export const Header = () => {
 
       <div className="flex items-center justify-between px-4 pt-2 pb-4">
         <div className="flex items-center gap-3 rounded-full border border-[#2f4663] bg-[#14253b] px-4 py-2">
-          <img alt={userName} className="h-8 w-8 rounded-full" src={user?.photoURL ?? undefined} />
+          <img alt={userName} className="h-8 w-8 rounded-full object-cover" src={avatar} />{" "}
           <span className="font-semibold text-[#f8fafc] text-sm">Welcome, {userName}</span>
         </div>
         <div className="flex items-center gap-2">

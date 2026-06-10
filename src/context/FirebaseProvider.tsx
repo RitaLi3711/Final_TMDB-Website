@@ -23,7 +23,8 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   const [cart, setCart] = useState<Map<number, ImageCell>>(new Map());
   const [movieGenrePref, setMovieGenrePref] = useState<string[]>([]);
   const [tvGenrePref, setTvGenrePref] = useState<string[]>([]);
-  const [userNameState, setUserNameState] = useState<string>("Guest"); // ← FIXED
+  const [userNameState, setUserNameState] = useState<string>("Guest");
+  const [avatar, setAvatarState] = useState<string>("");
 
   const { auth, firestore } = useMemo(() => {
     const app = initializeApp(firebaseConfig);
@@ -35,10 +36,12 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     cart?: Map<number, ImageCell>;
     movieGenrePref?: string[];
     tvGenrePref?: string[];
+    avatar?: string;
   }) => {
     if (!user) return;
 
     const dataToSave = {
+      avatar: updates.avatar ?? avatar,
       cart: Object.fromEntries(updates.cart ?? cart),
       favorites: Object.fromEntries(updates.favorites ?? favorites),
       movieGenrePref: updates.movieGenrePref ?? movieGenrePref,
@@ -65,12 +68,14 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
           setCart(new Map(Object.entries(userData?.cart || {}).map(([k, v]) => [Number(k), v as ImageCell])));
           setMovieGenrePref(userData?.movieGenrePref || movieGenres.map((g) => g.slug));
           setTvGenrePref(userData?.tvGenrePref || tvGenres.map((g) => g.slug));
+          setAvatarState(userData?.avatar || "");
         } else {
           setUser(null);
           setFavorites(new Map());
           setCart(new Map());
           setMovieGenrePref(movieGenres.map((g) => g.slug));
           setTvGenrePref(tvGenres.map((g) => g.slug));
+          setAvatarState("");
         }
       } catch (error) {
         console.error("User sync error:", error);
@@ -98,6 +103,10 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   const setUserName = (name: string) => refreshUser({ displayName: name });
+  const setAvatar = async (newAvatar: string) => {
+    setAvatarState(newAvatar);
+    await saveToFirestore({ avatar: newAvatar });
+  };
 
   const toggleFavorite = async (image: ImageCell) => {
     const next = new Map(favorites);
@@ -141,6 +150,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
       value={{
         addToCart,
         auth,
+        avatar,
         cart,
         clearCart,
         clearFavoritesByType,
@@ -149,6 +159,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
         movieGenrePref,
         refreshUser,
         removeFromCart,
+        setAvatar,
         setMovieGenrePref,
         setTvGenrePref,
         setUser,

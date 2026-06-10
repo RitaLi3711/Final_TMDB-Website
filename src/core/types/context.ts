@@ -21,4 +21,6 @@ export type FirebaseContextType = {
   removeFromCart: (id: number) => Promise<void>;
   clearCart: () => Promise<void>;
   clearFavoritesByType: (mediaType: "movie" | "tv") => Promise<void>;
+  avatar: string;
+  setAvatar: (avatar: string) => Promise<void>;
 };
