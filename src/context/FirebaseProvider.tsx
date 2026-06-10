@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged, type User, updateProfile } from "firebase/
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { FirebaseContext } from "@/context";
-import type { ImageCell } from "@/core";
+import type { ImageCell, Purchase } from "@/core";
 import { movieGenres, tvGenres } from "@/core";
 
 const firebaseConfig = {
@@ -25,7 +25,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   const [tvGenrePref, setTvGenrePrefState] = useState<string[]>([]);
   const [userNameState, setUserNameState] = useState<string>("Guest");
   const [avatar, setAvatarState] = useState<string>("");
-
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
   const { auth, firestore } = useMemo(() => {
     const app = initializeApp(firebaseConfig);
     return { auth: getAuth(app), firestore: getFirestore(app) };
@@ -37,6 +37,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     movieGenrePref?: string[];
     tvGenrePref?: string[];
     avatar?: string;
+    purchases?: Purchase[];
   }) => {
     if (!user) return;
 
@@ -45,6 +46,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
       cart: Object.fromEntries(updates.cart ?? cart),
       favorites: Object.fromEntries(updates.favorites ?? favorites),
       movieGenrePref: updates.movieGenrePref ?? movieGenrePref,
+      purchases: updates.purchases ?? purchases,
       tvGenrePref: updates.tvGenrePref ?? tvGenrePref,
     };
 
@@ -70,6 +72,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
           setTvGenrePrefState(userData?.tvGenrePref || tvGenres.map((g) => g.slug));
           setAvatarState(userData?.avatar || "");
+          setPurchases(userData?.purchases || []);
         } else {
           setUser(null);
           setFavorites(new Map());
@@ -77,6 +80,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
           setMovieGenrePrefState(movieGenres.map((g) => g.slug));
           setTvGenrePrefState(tvGenres.map((g) => g.slug));
           setAvatarState("");
+          setPurchases([]);
         }
       } catch (error) {
         console.error("User sync error:", error);
@@ -87,6 +91,16 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
     return () => unsubscribe();
   }, [auth, firestore]);
+
+  const addPurchase = async (purchase: Purchase) => {
+    const next = [purchase, ...purchases];
+
+    setPurchases(next);
+
+    await saveToFirestore({
+      purchases: next,
+    });
+  };
 
   const setMovieGenrePref = async (genres: string[]) => {
     setMovieGenrePrefState(genres);
@@ -165,6 +179,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   return (
     <FirebaseContext.Provider
       value={{
+        addPurchase,
         addToCart,
         auth,
         avatar,
@@ -174,6 +189,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
         favorites,
         firestore,
         movieGenrePref,
+        purchases,
         refreshUser,
         removeFromCart,
         setAvatar,

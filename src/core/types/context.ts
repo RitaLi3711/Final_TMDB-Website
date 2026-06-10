@@ -2,6 +2,12 @@ import type { Auth, User } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import type { ImageCell } from "@/core";
 
+export type Purchase = {
+  items: ImageCell[];
+  total: number;
+  date: string;
+};
+
 export type FirebaseContextType = {
   auth: Auth;
   firestore: Firestore;
@@ -23,4 +29,7 @@ export type FirebaseContextType = {
   clearFavoritesByType: (mediaType: "movie" | "tv") => Promise<void>;
   avatar: string;
   setAvatar: (avatar: string) => Promise<void>;
+  purchases: Purchase[];
+
+  addPurchase: (purchase: Purchase) => Promise<void>;
 };
