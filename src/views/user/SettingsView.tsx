@@ -118,8 +118,17 @@ export const SettingsView = () => {
             <div className="rounded-2xl border border-gray-700 bg-gray-900 p-4">
               <h2 className="font-semibold text-lg">Profile</h2>
               <p className="mb-2 text-gray-400 text-sm">Update your display profile</p>
-
-              <AvatarSelector avatars={AVATARS} onChange={setSelectedAvatar} value={selectedAvatar} />
+              <div className="my-4">
+                <AvatarSelector
+                  avatars={AVATARS}
+                  onChange={(avatar) => {
+                    setSelectedAvatar(avatar);
+                    setNameSuccess("");
+                    setNameError("");
+                  }}
+                  value={selectedAvatar}
+                />{" "}
+              </div>{" "}
               <input
                 autoComplete="username"
                 className="mb-3 w-full rounded-lg border border-gray-700 bg-gray-800 px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -133,7 +142,6 @@ export const SettingsView = () => {
                 type="text"
                 value={usernameInput}
               />
-
               <div className="flex items-center justify-end gap-2">
                 {nameSuccess && <p className="text-green-400 text-xs">{nameSuccess}</p>}
 
@@ -143,10 +151,11 @@ export const SettingsView = () => {
                     onClick={() => {
                       setUsernameInput(userName);
                       setSelectedAvatar(avatar);
+                      setNameSuccess("");
+                      setNameError("");
                     }}
                     variant="grey"
                   >
-                    {" "}
                     Reset
                   </Button>
                 </div>
