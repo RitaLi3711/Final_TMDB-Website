@@ -1,8 +1,8 @@
 import { updatePassword } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Button, ButtonGroup } from "@/components";
-import { movieGenres, tvGenres } from "@/core";
+import { AvatarSelector, Button, ButtonGroup } from "@/components";
+import { AVATARS, movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const SettingsView = () => {
@@ -17,6 +17,7 @@ export const SettingsView = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [avatar, setAvatar] = useState(AVATARS[0]);
 
   const menu = (searchParams.get("menu") as "account" | "purchases") || "account";
 
@@ -99,9 +100,8 @@ export const SettingsView = () => {
               <h2 className="font-semibold text-lg">Profile</h2>
               <p className="mb-2 text-gray-400 text-sm">Update your display profile</p>
 
-              <label className="text-gray-300 text-sm" htmlFor="username">
-                Username
-              </label>
+              <AvatarSelector avatars={AVATARS} onChange={setAvatar} value={avatar} />
+
               <input
                 autoComplete="username"
                 className="mb-3 w-full rounded-lg border border-gray-700 bg-gray-800 px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
