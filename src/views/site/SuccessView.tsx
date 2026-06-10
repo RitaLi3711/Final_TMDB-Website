@@ -12,13 +12,9 @@ export const SuccessView = () => {
           </div>
         </div>
 
-        <h1 className="mb-8 font-bold text-5xl text-white">
-          Purchase Successful
-        </h1>
+        <h1 className="mb-8 font-bold text-5xl text-white">Purchase Successful</h1>
 
-        <p className="mb-12 text-xl text-gray-400">
-          Your order has been processed and added to your account.
-        </p>
+        <p className="mb-12 text-gray-400 text-xl">Your order has been processed and added to your account.</p>
 
         <div className="space-y-5 text-lg text-white">
           <p>You can view your purchase history in Settings.</p>

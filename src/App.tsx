@@ -18,6 +18,7 @@ import {
   SeasonsView,
   SettingsView,
   SignInView,
+  SuccessView,
   SummaryView,
   TelevisionView,
   TrailersView,
@@ -71,6 +72,7 @@ export const App = () => {
 
         <Route element={<FavoritesView />} path="favorites" />
         <Route element={<CartView />} path="cart" />
+        <Route element={<SuccessView />} path="success" />
 
         <Route element={<SettingsView />} path="settings" />
 

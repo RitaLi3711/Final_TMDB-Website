@@ -15,6 +15,7 @@ export * from "@/views/movies/MoviesView";
 export * from "@/views/site/ErrorView";
 export * from "@/views/site/HomeView";
 export * from "@/views/site/SearchView";
+export * from "@/views/site/SuccessView";
 
 export * from "@/views/tv/EpisodeView";
 export * from "@/views/tv/SeasonsView";
