@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FaRegHeart, FaRegTrashAlt } from "@/components";
 import { calculatePrice, formatPrice, ICON_SIZE, TAX_RATE } from "@/core";
 import { useFirebaseContext } from "@/hooks";
@@ -5,6 +6,7 @@ import { useFirebaseContext } from "@/hooks";
 export const CartView = () => {
   const { cart, removeFromCart, favorites, toggleFavorite, clearCart } = useFirebaseContext();
   const items = Array.from(cart.values());
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
 
   const subtotal = items.reduce((sum, item) => sum + calculatePrice(item.airDate || item.releaseDate || ""), 0);
 
@@ -27,9 +29,9 @@ export const CartView = () => {
         </button>
         <button
           className="rounded-md bg-[#bfcc94] px-4 py-2 font-semibold text-[#0D1821] text-sm transition hover:bg-[#e6aace]"
-          onClick={clearCart}
+          onClick={() => setShowPurchaseModal(true)}
         >
-          Purchase{" "}
+          Purchase
         </button>
       </div>
 
@@ -89,6 +91,54 @@ export const CartView = () => {
           </div>
         </div>
       </div>
+
+      {showPurchaseModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => setShowPurchaseModal(false)}>
+          <div className="w-full max-w-lg rounded-2xl bg-[#0f1a2f] p-8" onClick={(e) => e.stopPropagation()}>
+            <h2 className="mb-8 font-bold text-3xl text-white">Confirm Purchase</h2>
+
+            <div className="space-y-4 text-lg">
+              <div className="flex justify-between">
+                <span className="text-gray-300">Items</span>
+                <span className="text-white">{items.length}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-gray-300">Subtotal</span>
+                <span className="text-white">{formatPrice(subtotal)}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-gray-300">Taxes</span>
+                <span className="text-white">{formatPrice(subtotal * TAX_RATE)}</span>
+              </div>
+
+              <div className="border-gray-700 border-t pt-4">
+                <div className="flex justify-between">
+                  <span className="font-bold text-white text-xl">Total</span>
+                  <span className="font-bold text-[#4da3ff] text-xl">{formatPrice(subtotal * (1 + TAX_RATE))}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-end gap-4">
+              <button className="rounded-lg bg-red-500 px-6 py-3 font-semibold text-white" onClick={() => setShowPurchaseModal(false)}>
+                Cancel
+              </button>
+
+              <button
+                className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white"
+                onClick={() => {
+                  clearCart();
+                  setShowPurchaseModal(false);
+                }}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
