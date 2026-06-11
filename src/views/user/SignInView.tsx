@@ -125,7 +125,6 @@ export const SignInView = () => {
           </p>
         </form>
       </main>
-      <footer className="p-5 text-center text-gray-500 text-sm">Built with React, Vite and React Router</footer>
     </div>
   );
 };
