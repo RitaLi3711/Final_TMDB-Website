@@ -38,7 +38,11 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   const saveToFirestore = async (updates: { movieGenrePref?: string[]; tvGenrePref?: string[]; purchases?: Purchase[] }) => {
     if (!user) return;
 
-    const dataToSave: any = {};
+    const dataToSave: {
+      movieGenrePref?: string[];
+      tvGenrePref?: string[];
+      purchases?: Purchase[];
+    } = {};
 
     if (updates.movieGenrePref !== undefined) dataToSave.movieGenrePref = updates.movieGenrePref;
     if (updates.tvGenrePref !== undefined) dataToSave.tvGenrePref = updates.tvGenrePref;

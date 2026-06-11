@@ -40,12 +40,9 @@ export const SignInView = () => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Update Firebase Auth profile
         await updateProfile(user, { displayName: username, photoURL: avatar });
 
-        // Create Firestore document with avatar and default preferences
         await setDoc(doc(firestore, "users", user.uid), {
-          avatar: avatar,
           movieGenrePref: movieGenres.map((g) => g.slug),
           purchases: [],
           tvGenrePref: tvGenres.map((g) => g.slug),
@@ -66,23 +63,38 @@ export const SignInView = () => {
 
   const handleGoogle = async () => {
     try {
-      const userCredential = await signInWithPopup(auth, new GoogleAuthProvider());
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
       const user = userCredential.user;
 
-      // Check if user has a Firestore document, if not create one
+      if (!user) {
+        throw new Error("No user returned from Google sign-in");
+      }
+
+      // Wait for user to fully load
+      await user.reload();
+      const refreshedUser = auth.currentUser;
+
+      if (!refreshedUser) {
+        throw new Error("Failed to reload user");
+      }
+
+      console.log("Google photo URL:", refreshedUser.photoURL); // Check console
+
+      // Check if user has a Firestore document
       const { getDoc } = await import("firebase/firestore");
-      const userDoc = await getDoc(doc(firestore, "users", user.uid));
+      const userDoc = await getDoc(doc(firestore, "users", refreshedUser.uid));
 
       if (!userDoc.exists()) {
-        await setDoc(doc(firestore, "users", user.uid), {
-          avatar: user.photoURL || "",
+        await setDoc(doc(firestore, "users", refreshedUser.uid), {
           movieGenrePref: movieGenres.map((g) => g.slug),
           purchases: [],
           tvGenrePref: tvGenres.map((g) => g.slug),
         });
       }
 
-      setUser(user);
+      // This will trigger the FirebaseProvider to update avatar state
+      setUser(refreshedUser);
       navigate("/movies/category/now_playing");
     } catch (error) {
       console.error("Firebase OAuth sign-in failed:", error);

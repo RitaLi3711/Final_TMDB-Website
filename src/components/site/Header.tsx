@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ButtonGroup, FaRegHeart, GiExitDoor, GoGear, LinkGroup, PiShoppingCartSimple, SearchBar } from "@/components";
 import type { SearchType } from "@/core";
-import { ICON_SIZE } from "@/core";
+import { AVATARS, ICON_SIZE } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const Header = () => {
@@ -57,7 +57,16 @@ export const Header = () => {
 
       <div className="flex items-center justify-between px-4 pt-2 pb-4">
         <div className="flex items-center gap-3 rounded-full border border-[#2f4663] bg-[#14253b] px-4 py-2">
-          <img alt={userName} className="h-8 w-8 rounded-full object-cover" src={avatar} />{" "}
+          <img
+            alt={userName}
+            className="h-8 w-8 rounded-full object-cover"
+            onError={(e) => {
+              console.log("Image failed to load:", avatar);
+              e.currentTarget.src = AVATARS[0]; // Fallback to default avatar
+            }}
+            referrerPolicy="no-referrer"
+            src={avatar}
+          />{" "}
           <span className="font-semibold text-[#f8fafc] text-sm">Welcome, {userName}</span>
         </div>
         <div className="flex items-center gap-2">
