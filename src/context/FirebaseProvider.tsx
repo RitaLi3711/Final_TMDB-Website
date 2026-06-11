@@ -35,20 +35,14 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     return { auth: getAuth(app), firestore: getFirestore(app) };
   }, []);
 
-  const saveToFirestore = async (updates: {
-    movieGenrePref?: string[];
-    tvGenrePref?: string[];
-    avatar?: string;
-    purchases?: Purchase[];
-  }) => {
+  const saveToFirestore = async (updates: { movieGenrePref?: string[]; tvGenrePref?: string[]; purchases?: Purchase[] }) => {
     if (!user) return;
 
-    const dataToSave = {
-      avatar: updates.avatar ?? avatar,
-      movieGenrePref: updates.movieGenrePref ?? movieGenrePref,
-      purchases: updates.purchases ?? purchases,
-      tvGenrePref: updates.tvGenrePref ?? tvGenrePref,
-    };
+    const dataToSave: any = {};
+
+    if (updates.movieGenrePref !== undefined) dataToSave.movieGenrePref = updates.movieGenrePref;
+    if (updates.tvGenrePref !== undefined) dataToSave.tvGenrePref = updates.tvGenrePref;
+    if (updates.purchases !== undefined) dataToSave.purchases = updates.purchases;
 
     await setDoc(doc(firestore, "users", user.uid), dataToSave, { merge: true });
   };
@@ -70,7 +64,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
           setMovieGenrePrefState(userData?.movieGenrePref || movieGenres.map((g) => g.slug));
 
           setTvGenrePrefState(userData?.tvGenrePref || tvGenres.map((g) => g.slug));
-          setAvatarState(userData?.avatar || user.photoURL || "");
+          setAvatarState(user.photoURL || "");
           setPurchases(userData?.purchases || []);
         } else {
           setUser(null);
@@ -140,7 +134,6 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   const setUserName = (name: string) => refreshUser({ displayName: name });
   const setAvatar = async (newAvatar: string) => {
     setAvatarState(newAvatar);
-    await saveToFirestore({ avatar: newAvatar });
 
     if (auth.currentUser) {
       await updateProfile(auth.currentUser, { photoURL: newAvatar });

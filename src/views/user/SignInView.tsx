@@ -1,16 +1,23 @@
 import type { FirebaseError } from "firebase/app";
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  updateProfile,
+} from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import type { SyntheticEvent } from "react";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { AvatarSelector } from "@/components";
-import { AVATARS, ICON_SIZE } from "@/core";
+import { AVATARS, ICON_SIZE, movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const SignInView = () => {
   const navigate = useNavigate();
-  const { auth, setUser, refreshUser } = useFirebaseContext();
+  const { auth, setUser, firestore } = useFirebaseContext();
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,8 +37,22 @@ export const SignInView = () => {
 
     try {
       if (isRegister) {
-        await createUserWithEmailAndPassword(auth, email, password);
-        await refreshUser({ displayName: username, photoURL: avatar });
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Update Firebase Auth profile
+        await updateProfile(user, { displayName: username, photoURL: avatar });
+
+        // Create Firestore document with avatar and default preferences
+        await setDoc(doc(firestore, "users", user.uid), {
+          avatar: avatar,
+          movieGenrePref: movieGenres.map((g) => g.slug),
+          purchases: [],
+          tvGenrePref: tvGenres.map((g) => g.slug),
+        });
+
+        await user.reload();
+        setUser(user);
       } else {
         setUser((await signInWithEmailAndPassword(auth, email, password)).user);
       }
@@ -45,7 +66,23 @@ export const SignInView = () => {
 
   const handleGoogle = async () => {
     try {
-      setUser((await signInWithPopup(auth, new GoogleAuthProvider())).user);
+      const userCredential = await signInWithPopup(auth, new GoogleAuthProvider());
+      const user = userCredential.user;
+
+      // Check if user has a Firestore document, if not create one
+      const { getDoc } = await import("firebase/firestore");
+      const userDoc = await getDoc(doc(firestore, "users", user.uid));
+
+      if (!userDoc.exists()) {
+        await setDoc(doc(firestore, "users", user.uid), {
+          avatar: user.photoURL || "",
+          movieGenrePref: movieGenres.map((g) => g.slug),
+          purchases: [],
+          tvGenrePref: tvGenres.map((g) => g.slug),
+        });
+      }
+
+      setUser(user);
       navigate("/movies/category/now_playing");
     } catch (error) {
       console.error("Firebase OAuth sign-in failed:", error);
