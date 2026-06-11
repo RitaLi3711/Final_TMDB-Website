@@ -2,6 +2,7 @@ import { updatePassword } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AvatarSelector, Button, ButtonGroup } from "@/components";
+import type { Message } from "@/core";
 import { AVATARS, formatPrice, movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
@@ -9,11 +10,7 @@ export const SettingsView = () => {
   const { auth, userName, setUserName, movieGenrePref, setMovieGenrePref, tvGenrePref, setTvGenrePref, avatar, setAvatar } =
     useFirebaseContext();
   const [usernameInput, setUsernameInput] = useState(userName);
-  const [nameSuccess, setNameSuccess] = useState("");
-  const [nameError, setNameError] = useState("");
 
-  const [passwordSuccess, setPasswordSuccess] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [searchParams] = useSearchParams();
@@ -22,8 +19,10 @@ export const SettingsView = () => {
   const [selectedAvatar, setSelectedAvatar] = useState(avatar);
   const [selectedMovieGenres, setSelectedMovieGenres] = useState(movieGenrePref);
   const [selectedTvGenres, setSelectedTvGenres] = useState(tvGenrePref);
-  const [genreSuccess, setGenreSuccess] = useState("");
+  const [genreMessage, setGenreMessage] = useState<Message | null>(null);
   const { purchases } = useFirebaseContext();
+  const [nameMessage, setNameMessage] = useState<Message | null>(null);
+  const [passwordMessage, setPasswordMessage] = useState<Message | null>(null);
 
   useEffect(() => {
     setSelectedMovieGenres(movieGenrePref);
@@ -46,8 +45,7 @@ export const SettingsView = () => {
   }, [avatar]);
 
   const toggleGenre = (genreSlug: string, currentPreferences: string[], updatePreferences: (slugs: string[]) => void) => {
-    setGenreSuccess("");
-
+    setGenreMessage(null);
     updatePreferences(
       currentPreferences.includes(genreSlug) ? currentPreferences.filter((slug) => slug !== genreSlug) : [...currentPreferences, genreSlug],
     );
@@ -55,28 +53,40 @@ export const SettingsView = () => {
 
   const saveUsername = async () => {
     if (!usernameInput) {
-      setNameError("Username cannot be empty");
-      setNameSuccess("");
+      setNameMessage({
+        category: "username",
+        message: "Username cannot be empty",
+        type: "error",
+      });
       return;
     }
 
     setUserName(usernameInput.trim());
     await setAvatar(selectedAvatar);
 
-    setNameSuccess("Profile updated successfully");
-    setNameError("");
+    setNameMessage({
+      category: "username",
+      message: "Profile updated successfully",
+      type: "success",
+    });
   };
 
   const handlePasswordChange = async () => {
     if (!newPassword || !confirmPassword) {
-      setPasswordError("Please fill in both password fields");
-      setPasswordSuccess("");
+      setPasswordMessage({
+        category: "password",
+        message: "Please fill in both password fields",
+        type: "error",
+      });
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords do not match");
-      setPasswordSuccess("");
+      setPasswordMessage({
+        category: "password",
+        message: "Passwords do not match",
+        type: "error",
+      });
       return;
     }
 
@@ -87,15 +97,31 @@ export const SettingsView = () => {
 
       await updatePassword(auth.currentUser, newPassword);
 
-      setPasswordSuccess("Password updated successfully");
-      setPasswordError("");
+      setPasswordMessage({
+        category: "password",
+        message: "Password updated successfully",
+        type: "success",
+      });
 
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
-      setPasswordError((error as Error).message);
-      setPasswordSuccess("");
+      setPasswordMessage({
+        category: "password",
+        message: (error as Error).message,
+        type: "error",
+      });
     }
+  };
+
+  const saveGenrePrefs = () => {
+    setMovieGenrePref(selectedMovieGenres);
+    setTvGenrePref(selectedTvGenres);
+    setGenreMessage({
+      category: "genre",
+      message: "Genre preferences saved successfully",
+      type: "success",
+    });
   };
 
   return (
@@ -124,12 +150,11 @@ export const SettingsView = () => {
                   avatars={AVATARS}
                   onChange={(avatar) => {
                     setSelectedAvatar(avatar);
-                    setNameSuccess("");
-                    setNameError("");
+                    setNameMessage(null);
                   }}
                   value={selectedAvatar}
-                />{" "}
-              </div>{" "}
+                />
+              </div>
               <input
                 autoComplete="username"
                 className="mb-3 w-full rounded-lg border border-gray-700 bg-gray-800 px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -137,23 +162,21 @@ export const SettingsView = () => {
                 name="username"
                 onChange={(event) => {
                   setUsernameInput(event.target.value);
-                  setNameSuccess("");
-                  setNameError("");
+                  setNameMessage(null);
                 }}
                 type="text"
                 value={usernameInput}
               />
               <div className="flex items-center justify-end gap-2">
-                {nameSuccess && <p className="text-green-400 text-xs">{nameSuccess}</p>}
-
-                {nameError && <p className="text-red-400 text-xs">{nameError}</p>}
+                {nameMessage && (
+                  <p className={`text-${nameMessage.type === "error" ? "red" : "green"}-400 text-xs`}>{nameMessage.message}</p>
+                )}
                 <div className="scale-90">
                   <Button
                     onClick={() => {
                       setUsernameInput(userName);
                       setSelectedAvatar(avatar);
-                      setNameSuccess("");
-                      setNameError("");
+                      setNameMessage(null);
                     }}
                     variant="grey"
                   >
@@ -175,8 +198,7 @@ export const SettingsView = () => {
                   className="mb-3 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={(event) => {
                     setNewPassword(event.target.value);
-                    setPasswordSuccess("");
-                    setPasswordError("");
+                    setPasswordMessage(null);
                   }}
                   placeholder="New password"
                   type="password"
@@ -187,8 +209,7 @@ export const SettingsView = () => {
                   className="mb-4 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={(event) => {
                     setConfirmPassword(event.target.value);
-                    setPasswordSuccess("");
-                    setPasswordError("");
+                    setPasswordMessage(null);
                   }}
                   placeholder="Confirm password"
                   type="password"
@@ -197,8 +218,9 @@ export const SettingsView = () => {
 
                 <Button onClick={handlePasswordChange}>Update Password</Button>
                 <div className="mt-2">
-                  {passwordSuccess && <p className="text-green-400 text-xs">{passwordSuccess}</p>}
-                  {passwordError && <p className="text-red-400 text-xs">{passwordError}</p>}
+                  {passwordMessage && (
+                    <p className={`text-${passwordMessage.type === "error" ? "red" : "green"}-400 text-xs`}>{passwordMessage.message}</p>
+                  )}
                 </div>
               </div>
             )}
@@ -241,19 +263,14 @@ export const SettingsView = () => {
               </div>
             </div>
 
-            {genreSuccess && <p className="mt-4 text-center text-green-400 text-sm">{genreSuccess}</p>}
+            {genreMessage && (
+              <p className={`mt-4 text-center text-${genreMessage.type === "error" ? "red" : "green"}-400 text-sm`}>
+                {genreMessage.message}
+              </p>
+            )}
 
             <div className="mt-6 flex justify-center">
-              <Button
-                onClick={() => {
-                  setMovieGenrePref(selectedMovieGenres);
-                  setTvGenrePref(selectedTvGenres);
-
-                  setGenreSuccess("Genre preferences saved successfully");
-                }}
-              >
-                Save Preferences
-              </Button>
+              <Button onClick={saveGenrePrefs}>Save Preferences</Button>
             </div>
           </div>
         </div>

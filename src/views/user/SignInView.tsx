@@ -12,6 +12,7 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { AvatarSelector } from "@/components";
+import type { Message } from "@/core";
 import { AVATARS, ICON_SIZE, movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
@@ -24,14 +25,18 @@ export const SignInView = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState(AVATARS[0]);
-  const [error, setError] = useState("");
+  const [errorMessage, setErrorMessage] = useState<Message | null>(null);
 
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError("");
+    setErrorMessage(null);
 
     if (isRegister && password !== confirmPassword) {
-      setError("Passwords do not match");
+      setErrorMessage({
+        category: "auth",
+        message: "Passwords do not match",
+        type: "error",
+      });
       return;
     }
 
@@ -57,7 +62,11 @@ export const SignInView = () => {
       navigate("/movies/category/now_playing");
     } catch (error) {
       console.error("Firebase auth submit failed:", error);
-      setError((error as FirebaseError).message);
+      setErrorMessage({
+        category: "auth",
+        message: (error as FirebaseError).message,
+        type: "error",
+      });
     }
   };
 
@@ -79,7 +88,7 @@ export const SignInView = () => {
         throw new Error("Failed to reload user");
       }
 
-      console.log("Google photo URL:", refreshedUser.photoURL); // Check console
+      console.log("Google photo URL:", refreshedUser.photoURL);
 
       // Check if user has a Firestore document
       const { getDoc } = await import("firebase/firestore");
@@ -93,12 +102,15 @@ export const SignInView = () => {
         });
       }
 
-      // This will trigger the FirebaseProvider to update avatar state
       setUser(refreshedUser);
       navigate("/movies/category/now_playing");
     } catch (error) {
       console.error("Firebase OAuth sign-in failed:", error);
-      setError((error as FirebaseError).message);
+      setErrorMessage({
+        category: "auth",
+        message: (error as FirebaseError).message,
+        type: "error",
+      });
     }
   };
 
@@ -107,7 +119,7 @@ export const SignInView = () => {
       <main className="flex flex-1 flex-col items-center justify-center space-y-5 p-5">
         <form className="max-w-md space-y-4 rounded-xl bg-gray-800 p-5" onSubmit={handleSubmit}>
           <h1 className="font-bold text-2xl">{isRegister ? "Create Account" : "Sign In"}</h1>
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          {errorMessage && <p className={`text-${errorMessage.type === "error" ? "red" : "green"}-400 text-sm`}>{errorMessage.message}</p>}
           <input
             className="w-full rounded bg-gray-700 p-2"
             onChange={(event) => setEmail(event.target.value)}

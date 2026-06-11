@@ -32,6 +32,5 @@ export type FirebaseContextType = {
   purchases: Purchase[];
   completePurchase: (purchase: Purchase) => Promise<void>;
   loading: boolean;
-    logout: () => Promise<void>;
-
+  logout: () => Promise<void>;
 };
