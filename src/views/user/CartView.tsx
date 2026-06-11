@@ -5,7 +5,7 @@ import { calculatePrice, formatPrice, ICON_SIZE, TAX_RATE } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const CartView = () => {
-  const { cart, removeFromCart, favorites, toggleFavorite, clearCart, addPurchase } = useFirebaseContext();
+  const { cart, removeFromCart, favorites, toggleFavorite, clearCart, completePurchase } = useFirebaseContext();
   const items = Array.from(cart.values());
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const navigate = useNavigate();
@@ -134,14 +134,11 @@ export const CartView = () => {
               <button
                 className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white"
                 onClick={async () => {
-                  await addPurchase({
+                  await completePurchase({
                     date: new Date().toISOString(),
                     items,
                     total: subtotal * (1 + TAX_RATE),
                   });
-
-                  await clearCart();
-
                   setShowPurchaseModal(false);
                   navigate("/success");
                 }}

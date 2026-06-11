@@ -92,14 +92,25 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     return () => unsubscribe();
   }, [auth, firestore]);
 
-  const addPurchase = async (purchase: Purchase) => {
-    const next = [purchase, ...purchases];
+  const completePurchase = async (purchase: Purchase) => {
+    if (!user) return;
 
-    setPurchases(next);
+    const updatedPurchases = [purchase, ...purchases];
 
-    await saveToFirestore({
-      purchases: next,
-    });
+    const emptyCart = new Map();
+
+    await setDoc(
+      doc(firestore, "users", user.uid),
+      {
+        cart: {},
+        purchases: updatedPurchases,
+      },
+      { merge: true },
+    );
+
+    // Update local state
+    setPurchases(updatedPurchases);
+    setCart(emptyCart);
   };
 
   const setMovieGenrePref = async (genres: string[]) => {
@@ -179,13 +190,13 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   return (
     <FirebaseContext.Provider
       value={{
-        addPurchase,
         addToCart,
         auth,
         avatar,
         cart,
         clearCart,
         clearFavoritesByType,
+        completePurchase,
         favorites,
         firestore,
         movieGenrePref,

@@ -30,6 +30,5 @@ export type FirebaseContextType = {
   avatar: string;
   setAvatar: (avatar: string) => Promise<void>;
   purchases: Purchase[];
-
-  addPurchase: (purchase: Purchase) => Promise<void>;
+  completePurchase: (purchase: Purchase) => Promise<void>;
 };
