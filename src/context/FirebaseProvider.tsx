@@ -188,6 +188,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
         completePurchase,
         favorites,
         firestore,
+        loading,
         movieGenrePref,
         purchases,
         refreshUser,
