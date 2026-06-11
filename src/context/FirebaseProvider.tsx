@@ -71,7 +71,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
           setMovieGenrePrefState(userData?.movieGenrePref || movieGenres.map((g) => g.slug));
 
           setTvGenrePrefState(userData?.tvGenrePref || tvGenres.map((g) => g.slug));
-          setAvatarState(userData?.avatar || "");
+          setAvatarState(userData?.avatar || user.photoURL || "");
           setPurchases(userData?.purchases || []);
         } else {
           setUser(null);
@@ -108,7 +108,6 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
       { merge: true },
     );
 
-    // Update local state
     setPurchases(updatedPurchases);
     setCart(emptyCart);
   };
@@ -148,6 +147,12 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   const setAvatar = async (newAvatar: string) => {
     setAvatarState(newAvatar);
     await saveToFirestore({ avatar: newAvatar });
+
+    if (auth.currentUser) {
+      await updateProfile(auth.currentUser, { photoURL: newAvatar });
+      await auth.currentUser.reload();
+      setUser({ ...auth.currentUser });
+    }
   };
 
   const toggleFavorite = async (image: ImageCell) => {
