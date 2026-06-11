@@ -21,7 +21,7 @@ export const Dialog = ({ open, title, children, confirmText = "Confirm", cancelT
         {title && <h2 className="font-bold text-xl">{title}</h2>}
         <div className="mt-4 text-gray-300 text-sm">{children}</div>
         <div className="mt-6 flex justify-end gap-3">
-          <Button onClick={onClose} variant="red">
+          <Button onClick={onClose} variant="grey">
             {cancelText}
           </Button>
           <Button onClick={onConfirm}>{confirmText}</Button>
