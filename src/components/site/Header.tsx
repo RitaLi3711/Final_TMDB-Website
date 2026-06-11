@@ -10,8 +10,9 @@ export const Header = () => {
   const location = useLocation();
   const [query, setQuery] = useState<string>("");
   const [type, setType] = useState<SearchType>("movie");
-  const { userName, favorites, cart } = useFirebaseContext();
-  const { avatar } = useFirebaseContext();
+
+  const { userName, favorites, cart, avatar, logout } = useFirebaseContext();
+
 
   if (location.pathname === "/" || location.pathname === "/sign-in") {
     return null;
@@ -62,7 +63,7 @@ export const Header = () => {
             className="h-8 w-8 rounded-full object-cover"
             onError={(e) => {
               console.log("Image failed to load:", avatar);
-              e.currentTarget.src = AVATARS[0]; // Fallback to default avatar
+              e.currentTarget.src = AVATARS[0]; 
             }}
             referrerPolicy="no-referrer"
             src={avatar}
@@ -90,9 +91,9 @@ export const Header = () => {
           <button className="rounded-full p-2 transition hover:bg-gray-700" onClick={() => navigate("/settings")}>
             <GoGear color="#f0f4ef" size={ICON_SIZE} />
           </button>
-          <button className="rounded-full p-2 transition hover:bg-gray-700" onClick={() => navigate("/sign-in")}>
-            <GiExitDoor color="#f0f4ef" size={ICON_SIZE} />
-          </button>
+       <button className="rounded-full p-2 transition hover:bg-gray-700" onClick={logout}>
+  <GiExitDoor color="#f0f4ef" size={ICON_SIZE} />
+</button>
         </div>
       </div>
     </header>

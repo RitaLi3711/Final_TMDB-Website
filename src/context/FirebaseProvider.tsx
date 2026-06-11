@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, type User, updateProfile } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut, type User, updateProfile } from "firebase/auth";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FirebaseContext } from "@/context";
 import type { ImageCell, Purchase } from "@/core";
 import { movieGenres, tvGenres } from "@/core";
@@ -34,6 +35,15 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     const app = initializeApp(firebaseConfig);
     return { auth: getAuth(app), firestore: getFirestore(app) };
   }, []);
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    await signOut(auth);
+    setUser(null);
+    setCartStorage([]);
+    setFavoritesStorage([]);
+    navigate("/sign-in");
+  };
 
   const saveToFirestore = async (updates: { movieGenrePref?: string[]; tvGenrePref?: string[]; purchases?: Purchase[] }) => {
     if (!user) return;
@@ -189,6 +199,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
         favorites,
         firestore,
         loading,
+        logout,
         movieGenrePref,
         purchases,
         refreshUser,
