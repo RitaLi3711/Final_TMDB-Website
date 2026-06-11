@@ -261,23 +261,27 @@ export const SettingsView = () => {
         <div className="rounded-3xl border border-slate-700 p-8">
           <h2 className="mb-6 font-bold text-white text-xl">Orders</h2>
 
-          <div className="space-y-3">
-            {purchases.map((purchase) => (
-              <div className="rounded-xl border border-slate-600 bg-[#1b2940] p-4" key={purchase.date}>
-                <div className="mb-3 flex items-center justify-between">
-                  <p className="text-gray-300 text-sm">{new Date(purchase.date).toLocaleString()}</p>
+          {purchases.length === 0 ? (
+            <div className="py-8 text-center text-gray-400">No purchases yet.</div>
+          ) : (
+            <div className="space-y-3">
+              {purchases.map((purchase) => (
+                <div className="rounded-xl border border-slate-600 bg-[#1b2940] p-4" key={purchase.date}>
+                  <div className="mb-3 flex items-center justify-between">
+                    <p className="text-gray-300 text-sm">{new Date(purchase.date).toLocaleString()}</p>
 
-                  <p className="font-bold text-[#4da3ff] text-lg">{formatPrice(purchase.total)}</p>
-                </div>
+                    <p className="font-bold text-[#4da3ff] text-lg">{formatPrice(purchase.total)}</p>
+                  </div>
 
-                <div className="flex flex-wrap gap-2">
-                  {purchase.items.map((item) => (
-                    <img alt={item.primaryText} className="h-20 w-14 rounded object-cover" key={item.id} src={item.imageUrl} />
-                  ))}
+                  <div className="flex flex-wrap gap-2">
+                    {purchase.items.map((item) => (
+                      <img alt={item.primaryText} className="h-20 w-14 rounded object-cover" key={item.id} src={item.imageUrl} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </section>
