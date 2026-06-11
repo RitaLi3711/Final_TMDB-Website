@@ -166,43 +166,43 @@ export const SettingsView = () => {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-700 bg-gray-900 p-4">
-              <h2 className="font-semibold text-lg">Security</h2>
-              <p className="mb-4 text-gray-400 text-sm">Change your account password</p>
+            {auth.currentUser?.providerData[0]?.providerId === "password" && (
+              <div className="rounded-2xl border border-gray-700 bg-gray-900 p-4">
+                <h2 className="font-semibold text-lg">Security</h2>
+                <p className="mb-4 text-gray-400 text-sm">Change your account password</p>
 
-              <input
-                className="mb-3 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onChange={(event) => {
-                  setNewPassword(event.target.value);
-                  setPasswordSuccess("");
-                  setPasswordError("");
-                }}
-                placeholder="New password"
-                type="password"
-                value={newPassword}
-              />
+                <input
+                  className="mb-3 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(event) => {
+                    setNewPassword(event.target.value);
+                    setPasswordSuccess("");
+                    setPasswordError("");
+                  }}
+                  placeholder="New password"
+                  type="password"
+                  value={newPassword}
+                />
 
-              <input
-                className="mb-4 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onChange={(event) => {
-                  setConfirmPassword(event.target.value);
-                  setPasswordSuccess("");
-                  setPasswordError("");
-                }}
-                placeholder="Confirm password"
-                type="password"
-                value={confirmPassword}
-              />
+                <input
+                  className="mb-4 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(event) => {
+                    setConfirmPassword(event.target.value);
+                    setPasswordSuccess("");
+                    setPasswordError("");
+                  }}
+                  placeholder="Confirm password"
+                  type="password"
+                  value={confirmPassword}
+                />
 
-              <Button onClick={handlePasswordChange}>Update Password</Button>
-              <div className="mt-2">
-                {passwordSuccess && <p className="text-green-400 text-xs">{passwordSuccess}</p>}
-
-                {passwordError && <p className="text-red-400 text-xs">{passwordError}</p>}
+                <Button onClick={handlePasswordChange}>Update Password</Button>
+                <div className="mt-2">
+                  {passwordSuccess && <p className="text-green-400 text-xs">{passwordSuccess}</p>}
+                  {passwordError && <p className="text-red-400 text-xs">{passwordError}</p>}
+                </div>
               </div>
-            </div>
+            )}
           </div>
-
           <div className="flex-1 rounded-2xl border border-gray-700 bg-gray-900 p-6">
             <h2 className="font-semibold text-lg">Preferences</h2>
             <p className="text-gray-400 text-sm">Choose genres you like</p>
