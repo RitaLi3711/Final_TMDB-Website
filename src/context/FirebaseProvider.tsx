@@ -27,7 +27,6 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   const favorites = new Map(favoritesStorage);
   const cart = new Map(cartStorage);
 
-  // Changed to match teacher's naming
   const [moviePreferences, setMoviePreferencesState] = useState<string[]>([]);
   const [tvPreferences, setTvPreferencesState] = useState<string[]>([]);
   const [userNameState, setUserNameState] = useState<string>("Guest");
@@ -47,7 +46,6 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     navigate("/sign-in");
   };
 
-  // Changed to use moviePreferences/tvPreferences
   const saveToFirestore = async (updates: { moviePreferences?: string[]; tvPreferences?: string[]; purchases?: Purchase[] }) => {
     if (!user) return;
 
@@ -78,7 +76,6 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
           setUser(user);
 
-          // Changed to moviePreferences/tvPreferences
           setMoviePreferencesState(userData?.moviePreferences || movieGenres.map((g) => g.slug));
           setTvPreferencesState(userData?.tvPreferences || tvGenres.map((g) => g.slug));
           setAvatarState(user.photoURL || "");
@@ -117,7 +114,6 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     setCartStorage([]);
   };
 
-  // Changed to setMoviePreferences/setTvPreferences
   const setMoviePreferences = async (genres: string[]) => {
     setMoviePreferencesState(genres);
     await saveToFirestore({ moviePreferences: genres });
@@ -201,17 +197,17 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
         firestore,
         loading,
         logout,
-        moviePreferences, // Changed
+        moviePreferences,
         purchases,
         refreshUser,
         removeFromCart,
         setAvatar,
-        setMoviePreferences, // Changed
-        setTvPreferences, // Changed
+        setMoviePreferences, 
+        setTvPreferences,
         setUser,
         setUserName,
         toggleFavorite,
-        tvPreferences, // Changed
+        tvPreferences, 
         user,
         userName: userNameState,
       }}
