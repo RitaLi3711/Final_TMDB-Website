@@ -32,13 +32,6 @@ export const SettingsView = () => {
   const [nameMessage, setNameMessage] = useState<Message | null>(null);
   const [passwordMessage, setPasswordMessage] = useState<Message | null>(null);
 
-  const toggleGenre = (genreSlug: string, currentPreferences: string[]) => {
-    setGenreMessage(null);
-    return currentPreferences.includes(genreSlug)
-      ? currentPreferences.filter((slug) => slug !== genreSlug)
-      : [...currentPreferences, genreSlug];
-  };
-
   const saveUsername = async () => {
     if (!usernameInput) {
       setNameMessage({
@@ -102,12 +95,39 @@ export const SettingsView = () => {
     }
   };
 
-  const saveGenrePrefs = () => {
+  const saveGenrePrefs = async () => {
+    const movieCheckboxes = document.querySelectorAll('input[data-type="movie"]');
+    const selectedMovies: string[] = [];
+
+    movieCheckboxes.forEach((checkbox) => {
+      const input = checkbox as HTMLInputElement;
+      if (input.checked) {
+        const genre = input.getAttribute("data-genre");
+        if (genre) selectedMovies.push(genre);
+      }
+    });
+
+    const tvCheckboxes = document.querySelectorAll('input[data-type="tv"]');
+    const selectedTv: string[] = [];
+
+    tvCheckboxes.forEach((checkbox) => {
+      const input = checkbox as HTMLInputElement;
+      if (input.checked) {
+        const genre = input.getAttribute("data-genre");
+        if (genre) selectedTv.push(genre);
+      }
+    });
+
+    await setMoviePreferences(selectedMovies);
+    await setTvPreferences(selectedTv);
+
     setGenreMessage({
       category: "genre",
       message: "Genre preferences saved successfully",
       type: "success",
     });
+
+    setTimeout(() => setGenreMessage(null), 3000);
   };
 
   return (
@@ -223,9 +243,10 @@ export const SettingsView = () => {
                 {movieGenres.map(({ value: genreId, label: genreName, slug }) => (
                   <label className="flex items-center gap-2 text-sm" key={genreId}>
                     <input
-                      checked={moviePreferences.includes(slug)}
                       className="accent-[#BFCC94]"
-                      onChange={() => setMoviePreferences(toggleGenre(slug, moviePreferences))}
+                      data-genre={slug}
+                      data-type="movie"
+                      defaultChecked={moviePreferences.includes(slug)}
                       type="checkbox"
                     />
                     {genreName}
@@ -240,9 +261,10 @@ export const SettingsView = () => {
                 {tvGenres.map(({ value: genreId, label: genreName, slug }) => (
                   <label className="flex items-center gap-2 text-sm" key={genreId}>
                     <input
-                      checked={tvPreferences.includes(slug)}
                       className="accent-[#BFCC94]"
-                      onChange={() => setTvPreferences(toggleGenre(slug, tvPreferences))}
+                      data-genre={slug}
+                      data-type="tv"
+                      defaultChecked={tvPreferences.includes(slug)}
                       type="checkbox"
                     />
                     {genreName}
@@ -253,7 +275,6 @@ export const SettingsView = () => {
 
             {genreMessage && (
               <p className={`mt-4 text-center ${genreMessage.type === "error" ? "text-red-400" : "text-green-400"} text-sm`}>
-                {" "}
                 {genreMessage.message}
               </p>
             )}
