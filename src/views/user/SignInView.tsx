@@ -48,9 +48,9 @@ export const SignInView = () => {
         await updateProfile(user, { displayName: username, photoURL: avatar });
 
         await setDoc(doc(firestore, "users", user.uid), {
-          movieGenrePref: movieGenres.map((g) => g.slug),
+          moviePreferences: movieGenres.map((g) => g.slug),
           purchases: [],
-          tvGenrePref: tvGenres.map((g) => g.slug),
+          tvPreferences: tvGenres.map((g) => g.slug),
         });
 
         await user.reload();
@@ -80,7 +80,6 @@ export const SignInView = () => {
         throw new Error("No user returned from Google sign-in");
       }
 
-      // Wait for user to fully load
       await user.reload();
       const refreshedUser = auth.currentUser;
 
@@ -88,17 +87,14 @@ export const SignInView = () => {
         throw new Error("Failed to reload user");
       }
 
-      console.log("Google photo URL:", refreshedUser.photoURL);
-
-      // Check if user has a Firestore document
       const { getDoc } = await import("firebase/firestore");
       const userDoc = await getDoc(doc(firestore, "users", refreshedUser.uid));
 
       if (!userDoc.exists()) {
         await setDoc(doc(firestore, "users", refreshedUser.uid), {
-          movieGenrePref: movieGenres.map((g) => g.slug),
+          moviePreferences: movieGenres.map((g) => g.slug),
           purchases: [],
-          tvGenrePref: tvGenres.map((g) => g.slug),
+          tvPreferences: tvGenres.map((g) => g.slug),
         });
       }
 
@@ -119,7 +115,9 @@ export const SignInView = () => {
       <main className="flex flex-1 flex-col items-center justify-center space-y-5 p-5">
         <form className="max-w-md space-y-4 rounded-xl bg-gray-800 p-5" onSubmit={handleSubmit}>
           <h1 className="font-bold text-2xl">{isRegister ? "Create Account" : "Sign In"}</h1>
-          {errorMessage && <p className={`text-${errorMessage.type === "error" ? "red" : "green"}-400 text-sm`}>{errorMessage.message}</p>}
+          {errorMessage && (
+            <p className={errorMessage.type === "error" ? "text-red-400 text-sm" : "text-green-400 text-sm"}>{errorMessage.message}</p>
+          )}{" "}
           <input
             className="w-full rounded bg-gray-700 p-2"
             onChange={(event) => setEmail(event.target.value)}
