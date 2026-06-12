@@ -1,5 +1,5 @@
 import { updatePassword } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AvatarSelector, Button, ButtonGroup } from "@/components";
 import type { Message } from "@/core";
@@ -7,48 +7,36 @@ import { AVATARS, formatPrice, movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const SettingsView = () => {
-  const { auth, userName, setUserName, moviePreferences, setMoviePreferences, tvPreferences, setTvPreferences, avatar, setAvatar } =
-    useFirebaseContext();
+  const {
+    purchases,
+    auth,
+    userName,
+    setUserName,
+    moviePreferences,
+    setMoviePreferences,
+    tvPreferences,
+    setTvPreferences,
+    avatar,
+    setAvatar,
+  } = useFirebaseContext();
   const [usernameInput, setUsernameInput] = useState(userName);
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [selectedAvatar, setSelectedAvatar] = useState(avatar);
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const menu = (searchParams.get("menu") as "account" | "purchases") || "account";
-  const [selectedAvatar, setSelectedAvatar] = useState(avatar);
-  const [selectedMovieGenres, setSelectedMovieGenres] = useState(moviePreferences);
-  const [selectedTvGenres, setSelectedTvGenres] = useState(tvPreferences);
   const [genreMessage, setGenreMessage] = useState<Message | null>(null);
-  const { purchases } = useFirebaseContext();
   const [nameMessage, setNameMessage] = useState<Message | null>(null);
   const [passwordMessage, setPasswordMessage] = useState<Message | null>(null);
 
-  useEffect(() => {
-    setSelectedMovieGenres(moviePreferences);
-  }, [moviePreferences]);
-
-  useEffect(() => {
-    setSelectedTvGenres(tvPreferences);
-  }, [tvPreferences]);
-
-  useEffect(() => {
-    setUsernameInput(userName);
-  }, [userName]);
-
-  useEffect(() => {
-    navigate(`/settings?menu=${menu}`, { replace: true });
-  }, [menu, navigate]);
-
-  useEffect(() => {
-    setSelectedAvatar(avatar);
-  }, [avatar]);
-
-  const toggleGenre = (genreSlug: string, currentPreferences: string[], updatePreferences: (slugs: string[]) => void) => {
+  const toggleGenre = (genreSlug: string, currentPreferences: string[]) => {
     setGenreMessage(null);
-    updatePreferences(
-      currentPreferences.includes(genreSlug) ? currentPreferences.filter((slug) => slug !== genreSlug) : [...currentPreferences, genreSlug],
-    );
+    return currentPreferences.includes(genreSlug)
+      ? currentPreferences.filter((slug) => slug !== genreSlug)
+      : [...currentPreferences, genreSlug];
   };
 
   const saveUsername = async () => {
@@ -62,7 +50,7 @@ export const SettingsView = () => {
     }
 
     setUserName(usernameInput.trim());
-    await setAvatar(selectedAvatar);
+    setAvatar(selectedAvatar);
 
     setNameMessage({
       category: "username",
@@ -115,8 +103,6 @@ export const SettingsView = () => {
   };
 
   const saveGenrePrefs = () => {
-    setMoviePreferences(selectedMovieGenres);
-    setTvPreferences(selectedTvGenres);
     setGenreMessage({
       category: "genre",
       message: "Genre preferences saved successfully",
@@ -169,7 +155,7 @@ export const SettingsView = () => {
               />
               <div className="flex items-center justify-end gap-2">
                 {nameMessage && (
-                  <p className={`text-${nameMessage.type === "error" ? "red" : "green"}-400 text-xs`}>{nameMessage.message}</p>
+                  <p className={nameMessage.type === "error" ? "text-red-400 text-xs" : "text-green-400 text-xs"}>{nameMessage.message}</p>
                 )}
                 <div className="scale-90">
                   <Button
@@ -219,7 +205,9 @@ export const SettingsView = () => {
                 <Button onClick={handlePasswordChange}>Update Password</Button>
                 <div className="mt-2">
                   {passwordMessage && (
-                    <p className={`text-${passwordMessage.type === "error" ? "red" : "green"}-400 text-xs`}>{passwordMessage.message}</p>
+                    <p className={passwordMessage.type === "error" ? "text-red-400 text-xs" : "text-green-400 text-xs"}>
+                      {passwordMessage.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -235,9 +223,9 @@ export const SettingsView = () => {
                 {movieGenres.map(({ value: genreId, label: genreName, slug }) => (
                   <label className="flex items-center gap-2 text-sm" key={genreId}>
                     <input
-                      checked={selectedMovieGenres.includes(slug)}
+                      checked={moviePreferences.includes(slug)}
                       className="accent-[#BFCC94]"
-                      onChange={() => toggleGenre(slug, selectedMovieGenres, setSelectedMovieGenres)}
+                      onChange={() => setMoviePreferences(toggleGenre(slug, moviePreferences))}
                       type="checkbox"
                     />
                     {genreName}
@@ -252,9 +240,9 @@ export const SettingsView = () => {
                 {tvGenres.map(({ value: genreId, label: genreName, slug }) => (
                   <label className="flex items-center gap-2 text-sm" key={genreId}>
                     <input
-                      checked={selectedTvGenres.includes(slug)}
+                      checked={tvPreferences.includes(slug)}
                       className="accent-[#BFCC94]"
-                      onChange={() => toggleGenre(slug, selectedTvGenres, setSelectedTvGenres)}
+                      onChange={() => setTvPreferences(toggleGenre(slug, tvPreferences))}
                       type="checkbox"
                     />
                     {genreName}
@@ -264,7 +252,8 @@ export const SettingsView = () => {
             </div>
 
             {genreMessage && (
-              <p className={`mt-4 text-center text-${genreMessage.type === "error" ? "red" : "green"}-400 text-sm`}>
+              <p className={`mt-4 text-center ${genreMessage.type === "error" ? "text-red-400" : "text-green-400"} text-sm`}>
+                {" "}
                 {genreMessage.message}
               </p>
             )}
