@@ -26,8 +26,10 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
   const favorites = new Map(favoritesStorage);
   const cart = new Map(cartStorage);
-  const [movieGenrePref, setMovieGenrePrefState] = useState<string[]>([]);
-  const [tvGenrePref, setTvGenrePrefState] = useState<string[]>([]);
+
+  // Changed to match teacher's naming
+  const [moviePreferences, setMoviePreferencesState] = useState<string[]>([]);
+  const [tvPreferences, setTvPreferencesState] = useState<string[]>([]);
   const [userNameState, setUserNameState] = useState<string>("Guest");
   const [avatar, setAvatarState] = useState<string>("");
   const [purchases, setPurchases] = useState<Purchase[]>([]);
@@ -45,17 +47,18 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     navigate("/sign-in");
   };
 
-  const saveToFirestore = async (updates: { movieGenrePref?: string[]; tvGenrePref?: string[]; purchases?: Purchase[] }) => {
+  // Changed to use moviePreferences/tvPreferences
+  const saveToFirestore = async (updates: { moviePreferences?: string[]; tvPreferences?: string[]; purchases?: Purchase[] }) => {
     if (!user) return;
 
     const dataToSave: {
-      movieGenrePref?: string[];
-      tvGenrePref?: string[];
+      moviePreferences?: string[];
+      tvPreferences?: string[];
       purchases?: Purchase[];
     } = {};
 
-    if (updates.movieGenrePref !== undefined) dataToSave.movieGenrePref = updates.movieGenrePref;
-    if (updates.tvGenrePref !== undefined) dataToSave.tvGenrePref = updates.tvGenrePref;
+    if (updates.moviePreferences !== undefined) dataToSave.moviePreferences = updates.moviePreferences;
+    if (updates.tvPreferences !== undefined) dataToSave.tvPreferences = updates.tvPreferences;
     if (updates.purchases !== undefined) dataToSave.purchases = updates.purchases;
 
     await setDoc(doc(firestore, "users", user.uid), dataToSave, { merge: true });
@@ -75,15 +78,15 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
           setUser(user);
 
-          setMovieGenrePrefState(userData?.movieGenrePref || movieGenres.map((g) => g.slug));
-
-          setTvGenrePrefState(userData?.tvGenrePref || tvGenres.map((g) => g.slug));
+          // Changed to moviePreferences/tvPreferences
+          setMoviePreferencesState(userData?.moviePreferences || movieGenres.map((g) => g.slug));
+          setTvPreferencesState(userData?.tvPreferences || tvGenres.map((g) => g.slug));
           setAvatarState(user.photoURL || "");
           setPurchases(userData?.purchases || []);
         } else {
           setUser(null);
-          setMovieGenrePrefState(movieGenres.map((g) => g.slug));
-          setTvGenrePrefState(tvGenres.map((g) => g.slug));
+          setMoviePreferencesState(movieGenres.map((g) => g.slug));
+          setTvPreferencesState(tvGenres.map((g) => g.slug));
           setAvatarState("");
           setPurchases([]);
         }
@@ -114,20 +117,15 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     setCartStorage([]);
   };
 
-  const setMovieGenrePref = async (genres: string[]) => {
-    setMovieGenrePrefState(genres);
-
-    await saveToFirestore({
-      movieGenrePref: genres,
-    });
+  // Changed to setMoviePreferences/setTvPreferences
+  const setMoviePreferences = async (genres: string[]) => {
+    setMoviePreferencesState(genres);
+    await saveToFirestore({ moviePreferences: genres });
   };
 
-  const setTvGenrePref = async (genres: string[]) => {
-    setTvGenrePrefState(genres);
-
-    await saveToFirestore({
-      tvGenrePref: genres,
-    });
+  const setTvPreferences = async (genres: string[]) => {
+    setTvPreferencesState(genres);
+    await saveToFirestore({ tvPreferences: genres });
   };
 
   const refreshUser = async (updates: { displayName?: string; photoURL?: string }) => {
@@ -165,11 +163,13 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     }
     setFavoritesStorage(Array.from(map.entries()));
   };
+
   const addToCart = async (image: ImageCell) => {
     const map = new Map(cart);
     map.set(image.id, image);
     setCartStorage(Array.from(map.entries()));
   };
+
   const removeFromCart = async (id: number) => {
     const map = new Map(cart);
     map.delete(id);
@@ -179,6 +179,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   const clearCart = async () => {
     setCartStorage([]);
   };
+
   const clearFavoritesByType = async (mediaType: "movie" | "tv") => {
     const newFavorites = Array.from(favoritesStorage).filter(([_, item]) => item.media !== mediaType);
     setFavoritesStorage(newFavorites);
@@ -200,17 +201,17 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
         firestore,
         loading,
         logout,
-        movieGenrePref,
+        moviePreferences, // Changed
         purchases,
         refreshUser,
         removeFromCart,
         setAvatar,
-        setMovieGenrePref,
-        setTvGenrePref,
+        setMoviePreferences, // Changed
+        setTvPreferences, // Changed
         setUser,
         setUserName,
         toggleFavorite,
-        tvGenrePref,
+        tvPreferences, // Changed
         user,
         userName: userNameState,
       }}

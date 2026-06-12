@@ -9,5 +9,4 @@ export * from "@/core/types/endpoints";
 export * from "@/core/types/firebase";
 export * from "@/core/utils/getBackdropUrl";
 export * from "@/core/utils/getImageUrl";
-export * from "@/core/utils/imageActions";
 export * from "@/core/utils/pricing";

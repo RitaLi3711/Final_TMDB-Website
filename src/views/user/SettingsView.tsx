@@ -7,7 +7,7 @@ import { AVATARS, formatPrice, movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const SettingsView = () => {
-  const { auth, userName, setUserName, movieGenrePref, setMovieGenrePref, tvGenrePref, setTvGenrePref, avatar, setAvatar } =
+  const { auth, userName, setUserName, moviePreferences, setMoviePreferences, tvPreferences, setTvPreferences, avatar, setAvatar } =
     useFirebaseContext();
   const [usernameInput, setUsernameInput] = useState(userName);
 
@@ -17,20 +17,20 @@ export const SettingsView = () => {
   const navigate = useNavigate();
   const menu = (searchParams.get("menu") as "account" | "purchases") || "account";
   const [selectedAvatar, setSelectedAvatar] = useState(avatar);
-  const [selectedMovieGenres, setSelectedMovieGenres] = useState(movieGenrePref);
-  const [selectedTvGenres, setSelectedTvGenres] = useState(tvGenrePref);
+  const [selectedMovieGenres, setSelectedMovieGenres] = useState(moviePreferences);
+  const [selectedTvGenres, setSelectedTvGenres] = useState(tvPreferences);
   const [genreMessage, setGenreMessage] = useState<Message | null>(null);
   const { purchases } = useFirebaseContext();
   const [nameMessage, setNameMessage] = useState<Message | null>(null);
   const [passwordMessage, setPasswordMessage] = useState<Message | null>(null);
 
   useEffect(() => {
-    setSelectedMovieGenres(movieGenrePref);
-  }, [movieGenrePref]);
+    setSelectedMovieGenres(moviePreferences);
+  }, [moviePreferences]);
 
   useEffect(() => {
-    setSelectedTvGenres(tvGenrePref);
-  }, [tvGenrePref]);
+    setSelectedTvGenres(tvPreferences);
+  }, [tvPreferences]);
 
   useEffect(() => {
     setUsernameInput(userName);
@@ -115,8 +115,8 @@ export const SettingsView = () => {
   };
 
   const saveGenrePrefs = () => {
-    setMovieGenrePref(selectedMovieGenres);
-    setTvGenrePref(selectedTvGenres);
+    setMoviePreferences(selectedMovieGenres);
+    setTvPreferences(selectedTvGenres);
     setGenreMessage({
       category: "genre",
       message: "Genre preferences saved successfully",

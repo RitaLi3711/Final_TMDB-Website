@@ -18,13 +18,11 @@ export const GenreView = () => {
   const { type: urlType = "movies", genreSlug = "action" } = useParams();
   const [type, setType] = useState<"movies" | "tv">(urlType as "movies" | "tv");
   const [page, setPage] = useState(1);
-  const { favorites, toggleFavorite, movieGenrePref, tvGenrePref, cart, removeFromCart } = useFirebaseContext();
-
+  const { favorites, toggleFavorite, moviePreferences, tvPreferences, cart, removeFromCart } = useFirebaseContext();
   const genres =
     type === "movies"
-      ? movieGenres.filter((genre) => movieGenrePref.length === 0 || movieGenrePref.includes(genre.slug))
-      : tvGenres.filter((genre) => tvGenrePref.length === 0 || tvGenrePref.includes(genre.slug));
-
+      ? movieGenres.filter((genre) => moviePreferences.length === 0 || moviePreferences.includes(genre.slug))
+      : tvGenres.filter((genre) => tvPreferences.length === 0 || tvPreferences.includes(genre.slug));
   const selectedGenre = genres.find((genre) => genre.slug === genreSlug)?.value ?? genres[0]?.value;
 
   const { data } = useTmdb<GenreResponse>(`${GENRE_ENDPOINT}/${type === "movies" ? "movie" : "tv"}`, { page, with_genres: selectedGenre });

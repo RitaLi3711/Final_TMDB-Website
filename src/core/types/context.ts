@@ -15,12 +15,12 @@ export type FirebaseContextType = {
   userName: string;
   favorites: Map<number, ImageCell>;
   cart: Map<number, ImageCell>;
-  movieGenrePref: string[];
-  tvGenrePref: string[];
+  moviePreferences: string[];
+  tvPreferences: string[];
   setUser: (user: User | null) => void;
   setUserName: (name: string) => Promise<void>;
-  setMovieGenrePref: (genres: string[]) => void;
-  setTvGenrePref: (genres: string[]) => void;
+  setMoviePreferences: (genres: string[]) => Promise<void>;
+  setTvPreferences: (genres: string[]) => Promise<void>;
   refreshUser: (updates: { displayName?: string; photoURL?: string }) => Promise<void>;
   toggleFavorite: (image: ImageCell) => Promise<void>;
   addToCart: (item: ImageCell) => Promise<void>;
