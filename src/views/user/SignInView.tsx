@@ -11,7 +11,6 @@ import type { SyntheticEvent } from "react";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
-import { AvatarSelector } from "@/components";
 import type { Message } from "@/core";
 import { AVATARS, ICON_SIZE, movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
@@ -24,7 +23,7 @@ export const SignInView = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [avatar, setAvatar] = useState(AVATARS[0]);
+  const [avatar, _setAvatar] = useState(AVATARS[0]);
   const [errorMessage, setErrorMessage] = useState<Message | null>(null);
 
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
@@ -119,14 +118,20 @@ export const SignInView = () => {
             <p className={errorMessage.type === "error" ? "text-red-400 text-sm" : "text-green-400 text-sm"}>{errorMessage.message}</p>
           )}{" "}
           <input
+            autoComplete="email"
             className="w-full rounded bg-gray-700 p-2"
+            id="email"
+            name="email"
             onChange={(event) => setEmail(event.target.value)}
             placeholder="Email"
             type="email"
             value={email}
           />
           <input
+            autoComplete={isRegister ? "new-password" : "current-password"}
             className="w-full rounded bg-gray-700 p-2"
+            id="password"
+            name="password"
             onChange={(event) => setPassword(event.target.value)}
             placeholder="Password"
             type="password"
@@ -135,19 +140,24 @@ export const SignInView = () => {
           {isRegister && (
             <>
               <input
+                autoComplete="new-password"
                 className="w-full rounded bg-gray-700 p-2"
+                id="confirm-password"
+                name="confirm-password"
                 onChange={(event) => setConfirmPassword(event.target.value)}
                 placeholder="Confirm password"
                 type="password"
                 value={confirmPassword}
               />
               <input
+                autoComplete="username"
                 className="w-full rounded bg-gray-700 p-2"
+                id="username"
+                name="username"
                 onChange={(event) => setUsername(event.target.value)}
                 placeholder="Username"
                 value={username}
               />
-              <AvatarSelector avatars={AVATARS} onChange={setAvatar} value={avatar} />
             </>
           )}
           <button className="w-full rounded bg-blue-600 p-2">{isRegister ? "Register" : "Sign In"}</button>
