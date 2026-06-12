@@ -297,7 +297,7 @@ export const SettingsView = () => {
                   <div className="mb-3 flex items-center justify-between">
                     <p className="text-gray-300 text-sm">{new Date(purchase.date).toLocaleString()}</p>
 
-                    <p className="font-bold text-[#4da3ff] text-lg">{formatPrice(purchase.total)}</p>
+                    <p className="font-bold text-[#e6aace] text-lg">{formatPrice(purchase.total)}</p>
                   </div>
 
                   <div className="flex flex-wrap gap-2">
