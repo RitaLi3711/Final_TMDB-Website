@@ -28,19 +28,14 @@ export const GenreView = () => {
 
   const { data } = useTmdb<GenreResponse>(`${GENRE_ENDPOINT}/${type === "movies" ? "movie" : "tv"}`, { page, with_genres: selectedGenre });
 
-  const gridData: ImageCell[] = (data?.results ?? []).map((result) => {
-    const isMovie = type === "movies";
-    const mediaType = isMovie ? "movie" : "tv";
-
-    return {
-      id: result.id,
-      imageUrl: getImageUrl(result.poster_path ?? ""),
-      media: mediaType,
-      primaryText: result.title || result.name || "",
-      releaseDate: isMovie ? result.release_date : undefined,
-      secondaryText: isMovie && result.release_date ? formatPrice(calculatePrice(result.release_date)) : undefined,
-    };
-  });
+  const gridData: ImageCell[] = (data?.results ?? []).map((result) => ({
+    id: result.id,
+    imageUrl: getImageUrl(result.poster_path ?? ""),
+    media: type === "movies" ? "movie" : "tv",
+    primaryText: result.title || result.name || "",
+    releaseDate: type === "movies" ? result.release_date : undefined,
+    secondaryText: type === "movies" && result.release_date ? formatPrice(calculatePrice(result.release_date)) : undefined,
+  }));
 
   return (
     <section className="mx-auto max-w-400 space-y-5 p-5">
