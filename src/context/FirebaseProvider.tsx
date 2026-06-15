@@ -80,17 +80,8 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
   const completePurchase = async (purchase: Purchase) => {
     if (!user) return;
-
     const updatedPurchases = [purchase, ...purchases];
-
-    await setDoc(
-      doc(firestore, "users", user.uid),
-      {
-        purchases: updatedPurchases,
-      },
-      { merge: true },
-    );
-
+    await saveToFirestore({ purchases: updatedPurchases });
     setPurchases(updatedPurchases);
     setCartStorage([]);
   };
@@ -105,57 +96,40 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     await saveToFirestore({ tvPreferences: genres });
   };
 
-  const refreshUser = async (updates: { displayName?: string; photoURL?: string }) => {
+  const updateUserProfile = async (updates: { displayName?: string; photoURL?: string }) => {
     if (!auth.currentUser) return;
-
     try {
       await updateProfile(auth.currentUser, updates);
       await auth.currentUser.reload();
-      const updatedUser = auth.currentUser;
-      setUser({ ...updatedUser });
-    } catch (error) {
-      console.error("Refresh error:", error);
-    }
-  };
-
-  const setUserName = (name: string) => refreshUser({ displayName: name });
-  const setAvatar = async (newAvatar: string) => {
-    if (auth.currentUser) {
-      await updateProfile(auth.currentUser, { photoURL: newAvatar });
-      await auth.currentUser.reload();
       setUser({ ...auth.currentUser });
+    } catch (error) {
+      console.error("Profile update error:", error);
     }
   };
 
-  const toggleFavorite = async (image: ImageCell) => {
+  const setUserName = (name: string) => updateUserProfile({ displayName: name });
+  const setAvatar = (newAvatar: string) => updateUserProfile({ photoURL: newAvatar });
+
+  const toggleFavorite = (image: ImageCell) => {
     const map = new Map(favorites);
-    if (map.has(image.id)) {
-      map.delete(image.id);
-    } else {
-      map.set(image.id, image);
-    }
+    map.has(image.id) ? map.delete(image.id) : map.set(image.id, image);
     setFavoritesStorage(Array.from(map.entries()));
   };
 
-  const addToCart = async (image: ImageCell) => {
+  const addToCart = (image: ImageCell) => {
     const map = new Map(cart);
     map.set(image.id, image);
     setCartStorage(Array.from(map.entries()));
   };
 
-  const removeFromCart = async (id: number) => {
-    const map = new Map(cart);
-    map.delete(id);
-    setCartStorage(Array.from(map.entries()));
+  const clearCart = () => setCartStorage([]);
+
+  const removeFromCart = (id: number) => {
+    setCartStorage((prev) => prev.filter(([itemId]) => itemId !== id));
   };
 
-  const clearCart = async () => {
-    setCartStorage([]);
-  };
-
-  const clearFavoritesByType = async (mediaType: "movie" | "tv") => {
-    const newFavorites = Array.from(favoritesStorage).filter(([_, item]) => item.media !== mediaType);
-    setFavoritesStorage(newFavorites);
+  const clearFavoritesByType = (mediaType: "movie" | "tv") => {
+    setFavoritesStorage((prev) => prev.filter(([_, item]) => item.media !== mediaType));
   };
 
   if (loading) return <p className="text-center text-gray-400">Loading...</p>;
@@ -176,7 +150,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
         logout,
         moviePreferences,
         purchases,
-        refreshUser,
+        refreshUser: updateUserProfile,
         removeFromCart,
         setAvatar,
         setMoviePreferences,
