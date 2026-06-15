@@ -28,8 +28,8 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
   const [moviePreferences, setMoviePreferencesState] = useState<string[]>(DEFAULT_GENRES.movie);
   const [tvPreferences, setTvPreferencesState] = useState<string[]>(DEFAULT_GENRES.tv);
-  const [userNameState, setUserNameState] = useState<string>("Guest");
-  const [avatar, setAvatarState] = useState<string>("");
+  const userName = user?.displayName || user?.email?.split("@")[0] || "Guest";
+  const avatar = user?.photoURL || "";
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const { auth, firestore } = useMemo(() => {
     const app = initializeApp(firebaseConfig);
@@ -62,11 +62,6 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   useEffect(() => {
-    const name = user?.displayName || user?.email?.split("@")[0] || "Guest";
-    setUserNameState(name);
-  }, [user]);
-
-  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
@@ -77,13 +72,11 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
           setMoviePreferencesState(userData?.moviePreferences || DEFAULT_GENRES.movie);
           setTvPreferencesState(userData?.tvPreferences || DEFAULT_GENRES.tv);
-          setAvatarState(user.photoURL || "");
           setPurchases(userData?.purchases || []);
         } else {
           setUser(null);
           setMoviePreferencesState(DEFAULT_GENRES.movie);
           setTvPreferencesState(DEFAULT_GENRES.tv);
-          setAvatarState("");
           setPurchases([]);
         }
       } catch (error) {
@@ -131,8 +124,6 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
       await auth.currentUser.reload();
       const updatedUser = auth.currentUser;
       setUser({ ...updatedUser });
-      const newName = updatedUser.displayName || updatedUser.email?.split("@")[0] || "Guest";
-      setUserNameState(newName);
     } catch (error) {
       console.error("Refresh error:", error);
     }
@@ -140,8 +131,6 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
   const setUserName = (name: string) => refreshUser({ displayName: name });
   const setAvatar = async (newAvatar: string) => {
-    setAvatarState(newAvatar);
-
     if (auth.currentUser) {
       await updateProfile(auth.currentUser, { photoURL: newAvatar });
       await auth.currentUser.reload();
@@ -208,7 +197,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
         toggleFavorite,
         tvPreferences,
         user,
-        userName: userNameState,
+        userName,
       }}
     >
       {children}
