@@ -47,18 +47,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
   const saveToFirestore = async (updates: { moviePreferences?: string[]; tvPreferences?: string[]; purchases?: Purchase[] }) => {
     if (!user) return;
-
-    const dataToSave: {
-      moviePreferences?: string[];
-      tvPreferences?: string[];
-      purchases?: Purchase[];
-    } = {};
-
-    if (updates.moviePreferences !== undefined) dataToSave.moviePreferences = updates.moviePreferences;
-    if (updates.tvPreferences !== undefined) dataToSave.tvPreferences = updates.tvPreferences;
-    if (updates.purchases !== undefined) dataToSave.purchases = updates.purchases;
-
-    await setDoc(doc(firestore, "users", user.uid), dataToSave, { merge: true });
+    await setDoc(doc(firestore, "users", user.uid), updates, { merge: true });
   };
 
   useEffect(() => {
