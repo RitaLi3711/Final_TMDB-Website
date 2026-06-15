@@ -7,12 +7,10 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import type { SyntheticEvent } from "react";
-import { useState } from "react";
-import { FcGoogle } from "react-icons/fc";
+import { type SyntheticEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Message } from "@/core";
-import { AVATARS, ICON_SIZE, movieGenres, tvGenres } from "@/core";
+import { FcGoogle } from "@/components";
+import { AVATARS, ICON_SIZE, type Message, movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const SignInView = () => {

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ButtonGroup, FaRegHeart, GiExitDoor, GoGear, LinkGroup, PiShoppingCartSimple, SearchBar } from "@/components";
-import type { SearchType } from "@/core";
-import { AVATARS, ICON_SIZE } from "@/core";
+import { AVATARS, ICON_SIZE, type SearchType } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const Header = () => {

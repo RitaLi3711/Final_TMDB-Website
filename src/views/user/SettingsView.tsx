@@ -2,8 +2,7 @@ import { updatePassword } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AvatarSelector, Button, ButtonGroup } from "@/components";
-import type { Message } from "@/core";
-import { AVATARS, formatPrice, movieGenres, tvGenres } from "@/core";
+import { AVATARS, formatPrice, type Message, movieGenres, tvGenres } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const SettingsView = () => {
