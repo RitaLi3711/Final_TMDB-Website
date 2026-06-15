@@ -4,8 +4,7 @@ import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FirebaseContext } from "@/context";
-import type { ImageCell, Purchase } from "@/core";
-import { movieGenres, tvGenres } from "@/core";
+import { CART_KEY, FAVORITES_KEY, type ImageCell, movieGenres, type Purchase, tvGenres } from "@/core";
 import { useLocalStorage } from "@/hooks";
 
 const firebaseConfig = {
@@ -21,8 +20,8 @@ const firebaseConfig = {
 export const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const [favoritesStorage, setFavoritesStorage] = useLocalStorage<[number, ImageCell][]>("favorites", []);
-  const [cartStorage, setCartStorage] = useLocalStorage<[number, ImageCell][]>("cart", []);
+  const [favoritesStorage, setFavoritesStorage] = useLocalStorage<[number, ImageCell][]>(FAVORITES_KEY, []);
+  const [cartStorage, setCartStorage] = useLocalStorage<[number, ImageCell][]>(CART_KEY, []);
 
   const favorites = new Map(favoritesStorage);
   const cart = new Map(cartStorage);
