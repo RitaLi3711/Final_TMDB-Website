@@ -1,21 +1,11 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signOut, type User, updateProfile } from "firebase/auth";
-import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
-import { useEffect, useMemo, useState } from "react";
+import { onAuthStateChanged, signOut, type User, updateProfile } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FirebaseContext } from "@/context";
 import { CART_KEY, DEFAULT_GENRES, FAVORITES_KEY, type ImageCell, type Purchase } from "@/core";
+import { auth, firestore } from "@/firebase";
 import { useLocalStorage } from "@/hooks";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCeOsh0QCApUiQfwcPeOf8mhsZTxmEgivg",
-  appId: "1:875852523536:web:d06ab57ebf086886fe4295",
-  authDomain: "summative-4f2ac.firebaseapp.com",
-  measurementId: "G-JS87V3JGSP",
-  messagingSenderId: "875852523536",
-  projectId: "summative-4f2ac",
-  storageBucket: "summative-4f2ac.firebasestorage.app",
-};
 
 export const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
@@ -31,10 +21,6 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   const userName = user?.displayName || user?.email?.split("@")[0] || "Guest";
   const avatar = user?.photoURL || "";
   const [purchases, setPurchases] = useState<Purchase[]>([]);
-  const { auth, firestore } = useMemo(() => {
-    const app = initializeApp(firebaseConfig);
-    return { auth: getAuth(app), firestore: getFirestore(app) };
-  }, []);
   const navigate = useNavigate();
 
   const logout = async () => {
@@ -76,7 +62,7 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
     });
 
     return () => unsubscribe();
-  }, [auth, firestore]);
+  }, []);
 
   const completePurchase = async (purchase: Purchase) => {
     if (!user) return;
