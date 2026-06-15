@@ -4,7 +4,7 @@ import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FirebaseContext } from "@/context";
-import { CART_KEY, FAVORITES_KEY, type ImageCell, movieGenres, type Purchase, tvGenres } from "@/core";
+import { CART_KEY, DEFAULT_GENRES, FAVORITES_KEY, type ImageCell, type Purchase } from "@/core";
 import { useLocalStorage } from "@/hooks";
 
 const firebaseConfig = {
@@ -26,8 +26,8 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   const favorites = new Map(favoritesStorage);
   const cart = new Map(cartStorage);
 
-  const [moviePreferences, setMoviePreferencesState] = useState<string[]>([]);
-  const [tvPreferences, setTvPreferencesState] = useState<string[]>([]);
+  const [moviePreferences, setMoviePreferencesState] = useState<string[]>(DEFAULT_GENRES.movie);
+  const [tvPreferences, setTvPreferencesState] = useState<string[]>(DEFAULT_GENRES.tv);
   const [userNameState, setUserNameState] = useState<string>("Guest");
   const [avatar, setAvatarState] = useState<string>("");
   const [purchases, setPurchases] = useState<Purchase[]>([]);
@@ -75,14 +75,14 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
 
           setUser(user);
 
-          setMoviePreferencesState(userData?.moviePreferences || movieGenres.map((g) => g.slug));
-          setTvPreferencesState(userData?.tvPreferences || tvGenres.map((g) => g.slug));
+          setMoviePreferencesState(userData?.moviePreferences || DEFAULT_GENRES.movie);
+          setTvPreferencesState(userData?.tvPreferences || DEFAULT_GENRES.tv);
           setAvatarState(user.photoURL || "");
           setPurchases(userData?.purchases || []);
         } else {
           setUser(null);
-          setMoviePreferencesState(movieGenres.map((g) => g.slug));
-          setTvPreferencesState(tvGenres.map((g) => g.slug));
+          setMoviePreferencesState(DEFAULT_GENRES.movie);
+          setTvPreferencesState(DEFAULT_GENRES.tv);
           setAvatarState("");
           setPurchases([]);
         }

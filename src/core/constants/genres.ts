@@ -23,3 +23,8 @@ export const tvGenres = [
   { label: "Mystery", slug: "mystery", value: 9648 },
   { label: "Sci-Fi", slug: "sci-fi", value: 10765 },
 ];
+
+export const DEFAULT_GENRES = {
+  movie: movieGenres.map((genre) => genre.slug),
+  tv: tvGenres.map((genre) => genre.slug),
+} as const;
