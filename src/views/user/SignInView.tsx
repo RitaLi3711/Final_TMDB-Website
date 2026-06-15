@@ -6,11 +6,11 @@ import {
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { type SyntheticEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FcGoogle } from "@/components";
-import { AVATARS, ICON_SIZE, type Message, movieGenres, tvGenres } from "@/core";
+import { AvatarSelector, FcGoogle } from "@/components";
+import { AVATARS, DEFAULT_GENRES, ICON_SIZE, type Message } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const SignInView = () => {
@@ -21,7 +21,7 @@ export const SignInView = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [avatar, _setAvatar] = useState(AVATARS[0]);
+  const [avatar, setAvatar] = useState(AVATARS[0]);
   const [errorMessage, setErrorMessage] = useState<Message | null>(null);
 
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
@@ -45,9 +45,9 @@ export const SignInView = () => {
         await updateProfile(user, { displayName: username, photoURL: avatar });
 
         await setDoc(doc(firestore, "users", user.uid), {
-          moviePreferences: movieGenres.map((g) => g.slug),
+          moviePreferences: DEFAULT_GENRES.movie,
           purchases: [],
-          tvPreferences: tvGenres.map((g) => g.slug),
+          tvPreferences: DEFAULT_GENRES.tv,
         });
 
         await user.reload();
@@ -83,15 +83,13 @@ export const SignInView = () => {
       if (!refreshedUser) {
         throw new Error("Failed to reload user");
       }
-
-      const { getDoc } = await import("firebase/firestore");
       const userDoc = await getDoc(doc(firestore, "users", refreshedUser.uid));
 
       if (!userDoc.exists()) {
         await setDoc(doc(firestore, "users", refreshedUser.uid), {
-          moviePreferences: movieGenres.map((g) => g.slug),
+          moviePreferences: DEFAULT_GENRES.movie,
           purchases: [],
-          tvPreferences: tvGenres.map((g) => g.slug),
+          tvPreferences: DEFAULT_GENRES.tv,
         });
       }
 
@@ -156,6 +154,10 @@ export const SignInView = () => {
                 placeholder="Username"
                 value={username}
               />
+              <div className="space-y-2">
+                <p className="text-gray-400 text-sm">Choose an avatar:</p>
+                <AvatarSelector avatars={AVATARS} onChange={setAvatar} value={avatar} />
+              </div>
             </>
           )}
           <button className="w-full rounded bg-blue-600 p-2">{isRegister ? "Register" : "Sign In"}</button>
