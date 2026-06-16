@@ -81,7 +81,7 @@ export const Header = () => {
               </span>
             )}
           </button>
-          <button className="rounded-full p-2 transition hover:bg-gray-700" onClick={() => navigate("/settings")}>
+          <button className="rounded-full p-2 transition hover:bg-gray-700" onClick={() => navigate("/settings?menu=account")}>
             <GoGear color="#f0f4ef" size={ICON_SIZE} />
           </button>
           <button className="rounded-full p-2 transition hover:bg-gray-700" onClick={logout}>
