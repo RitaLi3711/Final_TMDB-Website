@@ -12,5 +12,6 @@ export * from "@/components/controls/SearchBar";
 export * from "@/components/icons";
 export * from "@/components/site/DetailItem";
 export * from "@/components/site/Dialog";
+export * from "@/components/site/Footer";
 export * from "@/components/site/Modal";
 export * from "@/components/site/RouteGuard";

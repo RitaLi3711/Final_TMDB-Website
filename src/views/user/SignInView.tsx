@@ -9,7 +9,7 @@ import {
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { type SyntheticEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AvatarSelector, FcGoogle } from "@/components";
+import { AvatarSelector, FcGoogle, Footer } from "@/components";
 import { AVATARS, DEFAULT_GENRES, ICON_SIZE, type Message } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
@@ -106,92 +106,98 @@ export const SignInView = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0d1821]">
-      <main className="flex flex-1 flex-col items-center justify-center space-y-5 p-5">
-        <div className="text-center">
-          <h1 className="font-bold text-3xl text-[#e6aace] tracking-wide">Your Journey Awaits!</h1>
-        </div>
-        <form className="max-w-md space-y-4 rounded-xl bg-[#1a2a3a] p-5" onSubmit={handleSubmit}>
-          <h1 className="font-bold text-2xl text-[#f0f4ef]">{isRegister ? "Create Account" : "Sign In"}</h1>
-          {errorMessage && (
-            <p className={errorMessage.type === "error" ? "text-red-400 text-sm" : "text-green-400 text-sm"}>{errorMessage.message}</p>
-          )}
-          <input
-            autoComplete="email"
-            className="w-full rounded bg-[#0d1821] p-2 text-[#f0f4ef] placeholder:text-gray-500"
-            id="email"
-            name="email"
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="Email"
-            type="email"
-            value={email}
-          />
-          <input
-            autoComplete={isRegister ? "new-password" : "current-password"}
-            className="w-full rounded bg-[#0d1821] p-2 text-[#f0f4ef] placeholder:text-gray-500"
-            id="password"
-            name="password"
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Password"
-            type="password"
-            value={password}
-          />
-          {isRegister && (
-            <>
-              <input
-                autoComplete="new-password"
-                className="w-full rounded bg-[#0d1821] p-2 text-[#f0f4ef] placeholder:text-gray-500"
-                id="confirm-password"
-                name="confirm-password"
-                onChange={(event) => setConfirmPassword(event.target.value)}
-                placeholder="Confirm password"
-                type="password"
-                value={confirmPassword}
-              />
-              <input
-                autoComplete="username"
-                className="w-full rounded bg-[#0d1821] p-2 text-[#f0f4ef] placeholder:text-gray-500"
-                id="username"
-                name="username"
-                onChange={(event) => setUsername(event.target.value)}
-                placeholder="Username"
-                value={username}
-              />
-              <div className="space-y-2">
-                <AvatarSelector avatars={AVATARS} onChange={setAvatar} value={avatar} />
-              </div>
-            </>
-          )}
-          <button className="w-full rounded bg-[#e6aace] p-2 font-semibold text-[#0d1821] transition hover:opacity-90" type="submit">
-            {isRegister ? "Register" : "Sign In"}
-          </button>
-          <button
-            className="flex w-full items-center justify-center gap-2 rounded bg-[#f0f4ef] p-2 font-semibold text-[#0d1821] transition hover:opacity-90"
-            onClick={handleGoogle}
-            type="button"
-          >
-            <FcGoogle size={ICON_SIZE} />
-            Continue with Google
-          </button>
-          <p className="text-center text-[#bfcc94] text-sm">
-            {isRegister ? (
+    <>
+      <div className="flex min-h-screen flex-col bg-[#0d1821]">
+        <main className="flex flex-1 flex-col items-center justify-center space-y-5 p-5">
+          <div className="text-center">
+            <h1 className="font-bold text-3xl text-[#e6aace] tracking-wide">Your Journey Awaits!</h1>
+          </div>
+          <form className="max-w-md space-y-4 rounded-xl bg-[#1a2a3a] p-5" onSubmit={handleSubmit}>
+            <h1 className="font-bold text-2xl text-[#f0f4ef]">{isRegister ? "Create Account" : "Sign In"}</h1>
+            {errorMessage && (
+              <p className={errorMessage.type === "error" ? "text-red-400 text-sm" : "text-green-400 text-sm"}>{errorMessage.message}</p>
+            )}
+            <input
+              autoComplete="email"
+              className="w-full rounded bg-[#0d1821] p-2 text-[#f0f4ef] placeholder:text-gray-500"
+              id="email"
+              name="email"
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="Email"
+              type="email"
+              value={email}
+            />
+            <input
+              autoComplete={isRegister ? "new-password" : "current-password"}
+              className="w-full rounded bg-[#0d1821] p-2 text-[#f0f4ef] placeholder:text-gray-500"
+              id="password"
+              name="password"
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Password"
+              type="password"
+              value={password}
+            />
+            {isRegister && (
               <>
-                Already have an account?{" "}
-                <span className="cursor-pointer text-[#e6aace] underline transition hover:opacity-80" onClick={() => setIsRegister(false)}>
-                  Sign in
-                </span>
-              </>
-            ) : (
-              <>
-                Don’t have an account?{" "}
-                <span className="cursor-pointer text-[#e6aace] underline transition hover:opacity-80" onClick={() => setIsRegister(true)}>
-                  Register
-                </span>
+                <input
+                  autoComplete="new-password"
+                  className="w-full rounded bg-[#0d1821] p-2 text-[#f0f4ef] placeholder:text-gray-500"
+                  id="confirm-password"
+                  name="confirm-password"
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  placeholder="Confirm password"
+                  type="password"
+                  value={confirmPassword}
+                />
+                <input
+                  autoComplete="username"
+                  className="w-full rounded bg-[#0d1821] p-2 text-[#f0f4ef] placeholder:text-gray-500"
+                  id="username"
+                  name="username"
+                  onChange={(event) => setUsername(event.target.value)}
+                  placeholder="Username"
+                  value={username}
+                />
+                <div className="space-y-2">
+                  <AvatarSelector avatars={AVATARS} onChange={setAvatar} value={avatar} />
+                </div>
               </>
             )}
-          </p>
-        </form>
-      </main>
-    </div>
+            <button className="w-full rounded bg-[#e6aace] p-2 font-semibold text-[#0d1821] transition hover:opacity-90" type="submit">
+              {isRegister ? "Register" : "Sign In"}
+            </button>
+            <button
+              className="flex w-full items-center justify-center gap-2 rounded bg-[#f0f4ef] p-2 font-semibold text-[#0d1821] transition hover:opacity-90"
+              onClick={handleGoogle}
+              type="button"
+            >
+              <FcGoogle size={ICON_SIZE} />
+              Continue with Google
+            </button>
+            <p className="text-center text-[#bfcc94] text-sm">
+              {isRegister ? (
+                <>
+                  Already have an account?{" "}
+                  <span
+                    className="cursor-pointer text-[#e6aace] underline transition hover:opacity-80"
+                    onClick={() => setIsRegister(false)}
+                  >
+                    Sign in
+                  </span>
+                </>
+              ) : (
+                <>
+                  Don’t have an account?{" "}
+                  <span className="cursor-pointer text-[#e6aace] underline transition hover:opacity-80" onClick={() => setIsRegister(true)}>
+                    Register
+                  </span>
+                </>
+              )}
+            </p>
+          </form>
+        </main>
+      </div>
+      <Footer />
+    </>
   );
 };

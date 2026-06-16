@@ -1,20 +1,15 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ButtonGroup, FaRegHeart, GiExitDoor, GoGear, LinkGroup, PiShoppingCartSimple, SearchBar } from "@/components";
 import { AVATARS, ICON_SIZE, type SearchType } from "@/core";
 import { useFirebaseContext } from "@/hooks";
 
 export const Header = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [query, setQuery] = useState<string>("");
   const [type, setType] = useState<SearchType>("movie");
 
   const { userName, favorites, cart, avatar, logout } = useFirebaseContext();
-
-  if (location.pathname === "/" || location.pathname === "/sign-in") {
-    return null;
-  }
 
   return (
     <header className="sticky top-0 z-50 border-[#344966] border-b bg-[#0d1821]">
