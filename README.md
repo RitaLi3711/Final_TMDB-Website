@@ -1,5 +1,7 @@
 [link to website](curious-tiramisu-a01711.netlify.app)
 
+curious-tiramisu-a01711.netlify.app
+
 ## 🎯 Purpose
 
 - Manage global state using React Context
