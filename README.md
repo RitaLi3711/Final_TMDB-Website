@@ -1,4 +1,4 @@
-(curious-tiramisu-a01711.netlify.app)
+[link to website](curious-tiramisu-a01711.netlify.app)
 
 ## 🎯 Purpose
 
