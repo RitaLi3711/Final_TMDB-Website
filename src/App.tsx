@@ -29,6 +29,8 @@ import {
 export const App = () => {
   return (
     <Routes>
+      <Route element={<HomeView />} path="/" />
+
       <Route element={<SignInView />} path="/sign-in" />
 
       <Route
@@ -38,7 +40,6 @@ export const App = () => {
           </RouteGuard>
         }
       >
-        <Route element={<HomeView />} path="/" />
         <Route element={<Navigate replace to="/movies/category/now_playing" />} path="movies" />
         <Route element={<MoviesView />} path="movies/category/:interval" />
         <Route element={<Navigate replace to="/tv/category/airing_today" />} path="tv" />
